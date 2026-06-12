@@ -44,6 +44,16 @@ export const nutrilensTheme = {
     AVATAR_SM: 40,
     AVATAR_MD: 64,
     AVATAR_LG: 96,
+
+  H1: 40,
+  H2: 32,
+  H3: 24,
+  H4: 20,
+  H5: 18,
+
+  FONT: 16,
+
+  BUTTON_HEIGHT: 52,
   },
 
   shadows: {

@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native'
 import { Block ,Button,Text,useTheme} from 'galio-framework';
-const onboarding = () => {
+const onboarding1 = () => {
   return (
     <Block>
       <Text>onboarding</Text>
@@ -8,4 +8,4 @@ const onboarding = () => {
   )
 }
 
-export default onboarding
+export default onboarding1
