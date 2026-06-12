@@ -1,12 +1,7 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { Redirect } from 'expo-router'
 
-const RootLayout = () => {
-  return (
-    <View>
-      <Text>RootLayout</Text>
-    </View>
-  )
+const index = () => {
+  return <Redirect href="/(onboarding)/welcome" />
 }
 
-export default RootLayout
+export default index

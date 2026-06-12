@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native'
 import { Block ,Button,Text,useTheme} from 'galio-framework';
-import { Sparkles, Camera, TrendingUp, Brain } from "lucide-react";
+import { Camera, TrendingUp, Brain } from "lucide-react";
 const welcome = () => {
     const {colors,sizes,shadows}=useTheme();
       const features = [
