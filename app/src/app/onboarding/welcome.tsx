@@ -43,6 +43,7 @@ const welcome = () => {
             >
                 <Text>Get Started</Text>
             </Button>
+            <Text style={{color:colors.textSecondary}}>Take Control of Your Health</Text>
       </Block>
     </Block>
   )
