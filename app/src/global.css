@@ -1,9 +1,35 @@
 :root {
+  /* Main UI Font */
   --font-display:
-    Spline Sans, Inter, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji,
-    Segoe UI Symbol, Noto Color Emoji;
+    Inter,
+    "Plus Jakarta Sans",
+    ui-sans-serif,
+    system-ui,
+    sans-serif,
+    Apple Color Emoji,
+    Segoe UI Emoji,
+    Segoe UI Symbol,
+    Noto Color Emoji;
+
+  /* Dashboard Numbers */
   --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
-  --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
-  --font-serif: Georgia, 'Times New Roman', serif;
+    "JetBrains Mono",
+    "SF Mono",
+    SFMono-Regular,
+    Consolas,
+    Monaco,
+    monospace;
+
+  /* Rounded Headlines */
+  --font-rounded:
+    "Plus Jakarta Sans",
+    "SF Pro Rounded",
+    ui-sans-serif,
+    sans-serif;
+
+  /* Rarely Used */
+  --font-serif:
+    Georgia,
+    "Times New Roman",
+    serif;
 }
