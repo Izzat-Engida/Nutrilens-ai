@@ -7,7 +7,7 @@ const Card = ({ name, num }: { name: string; num: number }) => {
     return (
         <View style={styles.card}>
             <Text style={{color:"gray",fontSize:10}}>{name}</Text>
-            <Text style={{color:"black",fontSize:15}}>{num}</Text>
+            <Text style={{color:"black",fontSize:15,fontWeight:"bold"}}>{num}</Text>
         </View>
     )
 }
@@ -57,7 +57,12 @@ const styles=StyleSheet.create({
         borderRadius:15,
         justifyContent:"center",
         alignItems:"center",
-        margin:20
+        margin:20,
+          shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.08,
+  shadowRadius: 8,
+  elevation: 3,
     },
     card:{
         flex:1,

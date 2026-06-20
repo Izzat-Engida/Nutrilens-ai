@@ -36,9 +36,10 @@ const WeightCard = () => {
     <View style={styles.weightCard}>
       <Text style={styles.weightTitle}>Weight</Text>
 
-      <Text style={styles.value}>72.0 kg</Text>
-
-      <Text style={styles.sub}>↘ 1.4 kg this month</Text>
+      <View style={{ flexDirection: "row", alignItems: "baseline" }}>
+  <Text style={styles.value}>72.0</Text>
+  <Text style={styles.unit}> kg</Text>
+</View>
 
       {selectedPoint && (
         <View style={styles.tooltip}>
@@ -53,31 +54,26 @@ const WeightCard = () => {
       )}
 
       <LineChart
-        areaChart
-        curved
-        thickness={4}
-        color="#0066CC"
-        startFillColor="#0066CC"
-        endFillColor="#0066CC"
-        startOpacity={0.35}
-        endOpacity={0.03}
-        hideRules
-        hideYAxisText
-        hideAxesAndRules
-        hideDataPoints={false}
-        dataPointsColor="#0066CC"
-        dataPointsRadius={6}
-        data={data}
-        initialSpacing={10}
-        endSpacing={10}
-        yAxisThickness={0}
-        xAxisThickness={0}
-        hideOrigin
-        noOfSections={4}
-        onPress={(item) => {
-          setSelectedPoint(item);
-        }}
-      />
+  areaChart
+  curved
+  height={90}
+  width={220}
+  thickness={3}
+  color="#2563EB"
+  startFillColor="#2563EB"
+  endFillColor="#2563EB"
+  startOpacity={0.15}
+  endOpacity={0.01}
+  hideDataPoints
+  hideRules
+  hideAxesAndRules
+  hideYAxisText
+  yAxisThickness={0}
+  xAxisThickness={0}
+  data={data}
+  maxValue={150}
+  
+/>
     </View>
   );
 };
@@ -85,29 +81,40 @@ const WeightCard = () => {
 export default WeightCard;
 
 const styles = StyleSheet.create({
-  weightCard: {
-    margin: 20,
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 15,
-  },
+ weightCard: {
+  width: "66%",
+  backgroundColor: "#fff",
+  borderRadius: 24,
+  padding: 20,
+  height: 240,
 
-  weightTitle: {
-    fontSize: 16,
-    color: "gray",
-  },
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.08,
+  shadowRadius: 8,
+  elevation: 3,
+},
+weightTitle: {
+  fontSize: 14,
+  color: "#6B7280",
+  letterSpacing: 1,
+  marginBottom: 12,
+},
 
-  value: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#000",
-  },
-
+ value: {
+  fontSize: 25,
+  fontWeight: "700",
+  color: "#111827",
+},
   sub: {
     fontSize: 14,
     color: "gray",
-    marginBottom: 20,
+    marginBottom: 30,
   },
+  unit: {
+  fontSize: 20,
+  color: "#4B5563",
+},
 
   tooltip: {
     alignSelf: "center",

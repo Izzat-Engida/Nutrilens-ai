@@ -39,7 +39,7 @@ const FoodCards=({label,total,consumed,unit,title}:{label:string,total:number,co
 }
 
 
-const BetnoCards = () => {
+const BentoCards = () => {
   return (
     <View style={styles.container}>
         <View
@@ -47,23 +47,27 @@ const BetnoCards = () => {
         >
   
       <FoodCards label="Drumstick" total={140} consumed={84} unit="g" title="Protein"/>
-      <FoodCards label="Droplet" total={140} consumed={84} unit="g" title="Water"/>
+      <FoodCards label="Droplet" total={140} consumed={84} unit="L" title="Water"/>
       <FoodCards label="Wheat" total={140} consumed={84} unit="g" title="Carbs"/>
       <FoodCards label="CircleDot" total={140} consumed={84} unit="g" title="Fat"/>
         </View>
-    <View style={{flexDirection:"row",justifyContent:"space-between"}}>
-    <WeightCard/>
-    <View>
-        <Text style={{color:"gray",fontSize:15}}>
-            STREAK
-        </Text>
+      <View style={styles.statsRow}>
+  <WeightCard />
+
+  <View style={styles.streakCard}>
+    <Text style={styles.cardLabel}>STREAK</Text>
+
+    <View style={{ marginTop: "auto" }}>
+      <Text style={styles.streakNumber}>14</Text>
+      <Text style={styles.streakDays}>days</Text>
     </View>
-    </View>
+  </View>
+</View>
     </View>
   )
 }
 
-export default BetnoCards
+export default BentoCards
 const styles=StyleSheet.create({
         container:{
         flex:1,
@@ -83,6 +87,47 @@ const styles=StyleSheet.create({
         margin:5,
         padding:10,
         width:"45%",
+          shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.08,
+  shadowRadius: 8,
+  elevation: 3,
     },
+    statsRow: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  marginTop: 15,
+},
+
+streakCard: {
+  width: "30%",
+  backgroundColor: "#fff",
+  borderRadius: 24,
+  padding: 20,
+  height: 240,
+  marginLeft:15,
+
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.08,
+  shadowRadius: 8,
+  elevation: 3,
+},
+
+cardLabel: {
+  fontSize: 14,
+  color: "#6B7280",
+  letterSpacing: 1,
+},
+
+streakNumber: {
+  fontSize: 44,
+  fontWeight: "700",
+},
+
+streakDays: {
+  fontSize: 18,
+  color: "#6B7280",
+},
     
 })
