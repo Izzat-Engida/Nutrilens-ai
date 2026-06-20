@@ -6,7 +6,34 @@ import BentoCards from '@/components/BentoCards'
 import RecentCards from '@/components/RecentCards'
 import { Sparkles,ArrowRight } from 'lucide-react-native'
 import { Bell } from "lucide-react-native";
+import {Drumstick,Pizza,Apple,Beef} from "lucide-react-native"
 const Home = () => {
+  const data = [
+  {
+    icon: Drumstick,
+    foodName: "Grilled Chicken Breast",
+    calories: 220,
+    time: "08:15 AM",
+  },
+  {
+    icon: Apple,
+    foodName: "Apple & Almonds",
+    calories: 180,
+    time: "11:00 AM",
+  },
+  {
+    icon: Beef,
+    foodName: "Beef Rice Bowl",
+    calories: 520,
+    time: "01:30 PM",
+  },
+  {
+    icon: Pizza,
+    foodName: "Veggie Wrap",
+    calories: 320,
+    time: "06:45 PM",
+  },
+];
   return (
     <SafeAreaView style={style.container}>
       <ScrollView>
@@ -84,7 +111,7 @@ const Home = () => {
 
   <ArrowRight size={24} color="#000" />
 </View>
-        <RecentCards/>
+        <RecentCards data={data}/>
       </ScrollView>
 
     </SafeAreaView>

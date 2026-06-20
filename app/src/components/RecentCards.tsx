@@ -1,34 +1,17 @@
 import { View, Text,StyleSheet } from 'react-native'
 import React from 'react'
-import {Drumstick,Pizza,Apple,Beef, Icon} from "lucide-react-native"
-const RecentCards = () => {
+interface RecentCardsItem {
+  icon: React.ComponentType<any>;
+  foodName: string;
+  calories: number;
+  time: string;
+}
+interface RecentCardsProps {
+  data: RecentCardsItem[];
+}
+const RecentCards = ({data}: RecentCardsProps) => {
 
-  const data = [
-  {
-    icon: Drumstick,
-    foodName: "Grilled Chicken Breast",
-    calories: 220,
-    time: "08:15 AM",
-  },
-  {
-    icon: Apple,
-    foodName: "Apple & Almonds",
-    calories: 180,
-    time: "11:00 AM",
-  },
-  {
-    icon: Beef,
-    foodName: "Beef Rice Bowl",
-    calories: 520,
-    time: "01:30 PM",
-  },
-  {
-    icon: Pizza,
-    foodName: "Veggie Wrap",
-    calories: 320,
-    time: "06:45 PM",
-  },
-];
+  
   return (
     <View>
       <View style={{flexDirection:"row",justifyContent:"space-between",marginHorizontal:20}}>
