@@ -49,11 +49,11 @@ const Welcome = () => {
             carouselRef.current?.next()
         }
         else{
-            
+            router.replace('/(auth)/sign-in')
         }
     }
     const handleSkip=()=>{
-
+      router.replace('/(auth)/sign-in')
     }
   return (
     <SafeAreaView style={styles.container}>
