@@ -48,7 +48,7 @@ export default WelcomeIllustration
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 380,
+    height: 400,
     position: "relative",
   },
   card: {

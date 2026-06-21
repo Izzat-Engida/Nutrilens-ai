@@ -50,8 +50,8 @@ const styles = StyleSheet.create({
   riceLine: {
     position: "absolute",
     top: 190,
-    left: "50%",
-    width: 90,
+    left: "20%",
+    width: 275,
     height: 1.5,
     backgroundColor: "#0071E3",
   },
