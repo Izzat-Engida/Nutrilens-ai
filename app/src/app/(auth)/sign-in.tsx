@@ -9,7 +9,7 @@ const SignIN = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSignin=async ()=>{
-    
+    router.replace('/(onboarding)/Goals')
   }
   return (
     <SafeAreaView style={styles.container}>
