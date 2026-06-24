@@ -40,7 +40,6 @@ const slides:Slide[]=[
 ]
 const Welcome = () => {
     const router=useRouter()
-    console.log("Welcome page opened")
     const [activeIndex,setActiveIndex]=useState(0)
     const carouselRef=useRef<ICarouselInstance>(null)
 
