@@ -160,10 +160,6 @@ const TargetCard = () => {
       : null
   return (
     <SafeAreaView style={styles.container}>
-       <View style={styles.header}>
-              <Text style={styles.heading}>Your target & pace</Text>
-              <Text style={styles.subheading}>We'll build a plan to get you there safely.</Text>
-        </View>
             <View>
         <View style={styles.labelRow}>
             <Text style={[styles.subheading, { fontSize: 13, letterSpacing: 1 }]}>TARGET WEIGHT</Text>

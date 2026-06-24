@@ -66,10 +66,6 @@ const [selected,setSelected]=useState(0)
     ]
   return (
       <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-    <Text style={styles.heading}>How active are you?</Text>
-    <Text style={styles.subheading}>An honest answer gives the most accurate plan.</Text>
-            </View>
           <View style={{width:"100%", alignItems:"center"}}>
             {
                 choices.map((choice,index)=>(

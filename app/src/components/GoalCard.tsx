@@ -65,10 +65,6 @@ const GoalCard = () => {
     ]
   return (
     <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-<Text style={styles.heading}>What's your goal?</Text>
-<Text style={styles.subheading}>We'll personalize you daily calories and macros around it</Text>
-        </View>
       <View style={{width:"100%", alignItems:"center"}}>
         {
             choices.map((choice,index)=>(

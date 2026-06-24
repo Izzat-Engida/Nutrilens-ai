@@ -142,10 +142,6 @@ const AboutYou = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.heading}>A bit about you</Text>
-        <Text style={styles.subheading}>Used to estimate your calorie & macro needs</Text>
-      </View>
 
       <View>
         <Text style={[styles.subheading, { fontSize: 13, marginBottom: 10, letterSpacing: 1 }]}>SEX</Text>
