@@ -36,6 +36,7 @@ const ChoiceCard=({Icon,title,description,selected,onPress}:ChoiceCardProps)=>{
     )
 }
 const ActiveCard = () => {
+
 const [selected,setSelected]=useState(0)
     const choices=[
         {
@@ -82,7 +83,6 @@ const [selected,setSelected]=useState(0)
         </SafeAreaView>
   )
 }
-
 export default ActiveCard
 const styles=StyleSheet.create({
     container:{

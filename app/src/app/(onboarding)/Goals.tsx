@@ -2,11 +2,13 @@ import { View, Text ,StyleSheet, SafeAreaView} from 'react-native'
 import React from 'react'
 import GoalCard from '@/components/GoalCard'
 import AboutYou from '@/components/AboutYou'
+import TargetCard from '@/components/TargetCard'
+import ActiveCard from '@/components/ActiveCard'
 
 const Goals = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <AboutYou/>
+      <TargetCard/>
     </SafeAreaView>
   )
 }
