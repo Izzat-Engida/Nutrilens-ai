@@ -1,6 +1,7 @@
-import { View, Text,StyleSheet,SafeAreaView ,TouchableOpacity} from 'react-native'
+import { View, Text,StyleSheet,TouchableOpacity} from 'react-native'
 import {useState} from 'react'
 import {Dumbbell,Minus, TrendingUp,TrendingDown,LucideIcon} from "lucide-react-native"
+import { SafeAreaView } from "react-native-safe-area-context";
 interface ChoiceCardProps{
   Icon:LucideIcon,
   title:string,

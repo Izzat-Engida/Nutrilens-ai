@@ -1,8 +1,9 @@
 import {
-  View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
+  View, Text, StyleSheet, TouchableOpacity,
   ScrollView, NativeSyntheticEvent, NativeScrollEvent, LayoutChangeEvent
 } from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const cmToInches = (cm: number) => Math.round(cm / 2.54)

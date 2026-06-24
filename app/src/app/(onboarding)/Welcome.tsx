@@ -1,4 +1,5 @@
-import { View, Text,StyleSheet,Dimensions,TouchableOpacity ,SafeAreaView} from 'react-native'
+import { View, Text,StyleSheet,Dimensions,TouchableOpacity } from 'react-native'
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useRef, type ReactNode } from 'react'
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel"
 import { useRouter } from "expo-router"

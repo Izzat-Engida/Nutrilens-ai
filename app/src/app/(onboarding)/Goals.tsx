@@ -1,4 +1,5 @@
-import { View, Text ,StyleSheet, SafeAreaView,Dimensions, TouchableOpacity} from 'react-native'
+import { View, Text ,StyleSheet,Dimensions, TouchableOpacity} from 'react-native'
+import { SafeAreaView } from "react-native-safe-area-context";
 import {type ReactNode, useState,useRef} from 'react'
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel"
 import {  ArrowRight,ChevronRight,ChevronLeft } from "lucide-react-native"

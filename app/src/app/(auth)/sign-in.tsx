@@ -1,7 +1,8 @@
-import { View, Text,SafeAreaView,StyleSheet,TextInput,TouchableOpacity, KeyboardAvoidingView,Platform ,ScrollView} from 'react-native'
+import { View, Text,StyleSheet,TextInput,TouchableOpacity, KeyboardAvoidingView,Platform ,ScrollView} from 'react-native'
 import React,{useState} from 'react'
 import { Sparkles,Lock,Eye,EyeOff,Mail,ArrowRight } from "lucide-react-native";
 import {useRouter} from "expo-router"
+import { SafeAreaView } from "react-native-safe-area-context";
 const SignIN = () => {
   const router=useRouter()
   const [email,setEmail]=useState("")

@@ -1,10 +1,10 @@
 import { View, Text,StyleSheet,TouchableOpacity,
-     ScrollView, NativeSyntheticEvent, NativeScrollEvent, LayoutChangeEvent,SafeAreaView
+     ScrollView, NativeSyntheticEvent, NativeScrollEvent, LayoutChangeEvent
  } from 'react-native'
 import {useState,useRef,useEffect} from 'react'
 
 import { Sparkles, Target } from 'lucide-react-native'
-
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const kgToLb = (kg: number) => Math.round(kg * 2.20462)
 const lbToKg = (lb: number) => Math.round(lb / 2.20462)

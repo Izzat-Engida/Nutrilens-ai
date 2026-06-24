@@ -1,6 +1,7 @@
-import { View, Text ,SafeAreaView,StyleSheet,TouchableOpacity} from 'react-native'
+import { View, Text ,StyleSheet,TouchableOpacity} from 'react-native'
 import {useState} from 'react'
 import {LucideIcon,Sofa,Footprints,Flame,Bike} from "lucide-react-native"
+import { SafeAreaView } from "react-native-safe-area-context";
 interface ChoiceCardProps{
   Icon:LucideIcon,
   title:string,
