@@ -66,7 +66,7 @@ const [selected,setSelected]=useState(0)
         }
     ]
   return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
           <View style={{width:"100%", alignItems:"center"}}>
             {
                 choices.map((choice,index)=>(
@@ -77,13 +77,12 @@ const [selected,setSelected]=useState(0)
                 ))
             }
           </View>
-        </SafeAreaView>
+        </View>
   )
 }
 export default ActiveCard
 const styles=StyleSheet.create({
     container:{
-        flex:1,
         backgroundColor:"#fff",
         paddingHorizontal:20,
         paddingTop:20,

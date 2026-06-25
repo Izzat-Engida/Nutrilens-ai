@@ -142,7 +142,7 @@ const AboutYou = () => {
   const [weightUnit, setWeightUnit] = useState<"kg" | "lb">("kg")
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
 
       <View>
         <Text style={[styles.subheading, { fontSize: 13, marginBottom: 10, letterSpacing: 1 }]}>SEX</Text>
@@ -203,7 +203,7 @@ const AboutYou = () => {
           />
         )}
       </View>
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -211,7 +211,6 @@ export default AboutYou
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#fff",
     paddingHorizontal: 20,
     paddingTop: 20,

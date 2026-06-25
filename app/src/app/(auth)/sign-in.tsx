@@ -114,7 +114,7 @@ const styles=StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: 16,
-    marginTop: 50,
+  
   },
   brandRow: {
     flexDirection: "row",
