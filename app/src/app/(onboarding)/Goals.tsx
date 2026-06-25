@@ -112,7 +112,7 @@ const Goals = () => {
           nestedScrollEnabled
         >
           <View style={styles.header}>
-            <Text style={styles.eyebrow}>SETUP</Text>
+            <Text style={styles.eyebrow}> STEP {activeIndex + 1}/{slides.length}</Text>
             <Text style={styles.heading}>{item.title}</Text>
             <Text style={styles.subheading}>{item.description}</Text>
           </View>
