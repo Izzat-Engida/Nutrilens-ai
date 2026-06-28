@@ -3,14 +3,14 @@ import React from 'react'
 import {Drumstick,Droplet,Wheat,CircleDot} from "lucide-react-native"
 import * as Progress from 'react-native-progress';
 import WeightCard from './WeightCard';
+import { MacroProgress, useNutritionStore } from '@/store/nutritionStore';
 
 const TopBarIcon = ({ Icon, color }: { Icon: React.ComponentType<any>; color: string }) => (
   <Icon size={28} color={color}  style={{backgroundColor:"#0066cc42",borderRadius:100}} />
 )
 
 
-const FoodCards=({label,total,consumed,unit,title}:{label:string,total:number,consumed:number,unit:string,title:string})=>{
-    const fill=(consumed/total)*100;
+const FoodCards=({icon,total,consumed,unit,title}: Omit<MacroProgress, "key">)=>{
     const temp: Record<string, React.ComponentType<any>> = {
       Drumstick,
       Droplet,
@@ -18,7 +18,7 @@ const FoodCards=({label,total,consumed,unit,title}:{label:string,total:number,co
       CircleDot,
     }
 
-    const SelectedIcon = temp[label] || CircleDot
+    const SelectedIcon = temp[icon] || CircleDot
 
     return(
     <View style={styles.card}>
@@ -40,16 +40,18 @@ const FoodCards=({label,total,consumed,unit,title}:{label:string,total:number,co
 
 
 const BentoCards = () => {
+  const macros = useNutritionStore((state) => state.macros);
+  const streakDays = useNutritionStore((state) => state.streakDays);
+
   return (
     <View style={styles.container}>
         <View
         style={styles.GridView}
         >
   
-      <FoodCards label="Drumstick" total={140} consumed={84} unit="g" title="Protein"/>
-      <FoodCards label="Droplet" total={140} consumed={84} unit="L" title="Water"/>
-      <FoodCards label="Wheat" total={140} consumed={84} unit="g" title="Carbs"/>
-      <FoodCards label="CircleDot" total={140} consumed={84} unit="g" title="Fat"/>
+      {macros.map(({ key, ...macro }) => (
+        <FoodCards key={key} {...macro} />
+      ))}
         </View>
       <View style={styles.statsRow}>
   <WeightCard />
@@ -58,7 +60,7 @@ const BentoCards = () => {
     <Text style={styles.cardLabel}>STREAK</Text>
 
     <View style={{ marginTop: "auto" }}>
-      <Text style={styles.streakNumber}>14</Text>
+      <Text style={styles.streakNumber}>{streakDays}</Text>
       <Text style={styles.streakDays}>days</Text>
     </View>
   </View>

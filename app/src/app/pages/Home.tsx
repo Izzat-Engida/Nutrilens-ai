@@ -6,48 +6,26 @@ import BentoCards from '@/components/BentoCards'
 import RecentCards from '@/components/RecentCards'
 import { Sparkles,ArrowRight } from 'lucide-react-native'
 import { Bell } from "lucide-react-native";
-import {Drumstick,Pizza,Apple,Beef} from "lucide-react-native"
+import { useNutritionStore } from '@/store/nutritionStore'
 const Home = () => {
-  const data = [
-  {
-    icon: Drumstick,
-    foodName: "Grilled Chicken Breast",
-    calories: 220,
-    time: "08:15 AM",
-  },
-  {
-    icon: Apple,
-    foodName: "Apple & Almonds",
-    calories: 180,
-    time: "11:00 AM",
-  },
-  {
-    icon: Beef,
-    foodName: "Beef Rice Bowl",
-    calories: 520,
-    time: "01:30 PM",
-  },
-  {
-    icon: Pizza,
-    foodName: "Veggie Wrap",
-    calories: 320,
-    time: "06:45 PM",
-  },
-];
+  const user = useNutritionStore((state) => state.user);
+  const insight = useNutritionStore((state) => state.insight);
+  const recentMeals = useNutritionStore((state) => state.recentMeals);
+
   return (
     <SafeAreaView style={style.container}>
       <ScrollView>
         <View style={style.header}>
           <View>
             <Text style={style.greeting}>Good morning</Text>
-            <Text style={style.name}>Alex Chen</Text>
+            <Text style={style.name}>{user.name}</Text>
           </View>
           <View style={style.rightSection}>
             <TouchableOpacity style={style.bellContainer}>
           <Bell size={22} color="#222" />
         </TouchableOpacity>
         <View style={style.avatar}>
-        <Text style={style.avatarText}>AC</Text>
+        <Text style={style.avatarText}>{user.initials}</Text>
         </View>
           </View>
         </View>
@@ -105,13 +83,13 @@ const Home = () => {
       }}
       numberOfLines={2}
     >
-      Add 56g more protein to hit today's target
+      {insight}
     </Text>
   </View>
 
   <ArrowRight size={24} color="#000" />
 </View>
-        <RecentCards data={data}/>
+        <RecentCards data={recentMeals}/>
       </ScrollView>
 
     </SafeAreaView>

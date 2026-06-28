@@ -15,6 +15,7 @@ type Totals = {
 
 type ScanSummaryViewProps = {
   totals: Totals;
+  imageUri?: string;
   scanCount: number;
   mealType: MealType;
   missingFoodText: string;
@@ -25,6 +26,7 @@ type ScanSummaryViewProps = {
 
 const ScanSummaryView = ({
   totals,
+  imageUri,
   scanCount,
   mealType,
   missingFoodText,
@@ -49,14 +51,14 @@ const ScanSummaryView = ({
         <View style={styles.titleBlockCentered}>
           <Text style={styles.screenTitle}>Meal Summary</Text>
           <Text style={styles.screenSubtitle}>
-            Ready to save when the backend is connected.
+            Save this meal to today's store data.
           </Text>
         </View>
 
         <View style={styles.iconButtonGhost} />
       </View>
 
-      <MealPreview scanCount={scanCount} compact />
+      <MealPreview imageUri={imageUri} scanCount={scanCount} compact />
 
       <View style={styles.summaryCard}>
         <View style={styles.summaryHeader}>

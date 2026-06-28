@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import { View, Text,StyleSheet } from 'react-native'
 import {AnimatedCircularProgress} from 'react-native-circular-progress'
+import { useNutritionStore } from '@/store/nutritionStore'
 
 
 const Card = ({ name, num }: { name: string; num: number }) => {
@@ -12,8 +12,8 @@ const Card = ({ name, num }: { name: string; num: number }) => {
     )
 }
 const CalorieHome = () => {
-    const [calories,setCalories]=useState(1800);
-    const goal=2000;
+    const calories = useNutritionStore((state) => state.caloriesConsumed);
+    const goal = useNutritionStore((state) => state.calorieGoal);
     const fill=(calories/goal)*100;
   return (
     <View style={styles.container}>

@@ -1,7 +1,9 @@
 import { View, Text,StyleSheet } from 'react-native'
 import React from 'react'
+import { Apple, Beef, Drumstick, Pizza } from 'lucide-react-native';
+import { RecentMeal } from '@/store/nutritionStore';
 interface RecentCardsItem {
-  icon: React.ComponentType<any>;
+  icon: RecentMeal["icon"];
   foodName: string;
   calories: number;
   time: string;
@@ -10,6 +12,12 @@ interface RecentCardsProps {
   data: RecentCardsItem[];
 }
 const RecentCards = ({data}: RecentCardsProps) => {
+  const icons: Record<RecentMeal["icon"], React.ComponentType<any>> = {
+    apple: Apple,
+    beef: Beef,
+    drumstick: Drumstick,
+    pizza: Pizza,
+  };
 
   
   return (
@@ -19,7 +27,7 @@ const RecentCards = ({data}: RecentCardsProps) => {
       <Text style={{color:"#0066CC",fontSize:15,fontWeight:"bold"}}>See all</Text>
       </View>
       {data.map((item,index)=>{
-        const IconComponent = item.icon;
+        const IconComponent = icons[item.icon] ?? Drumstick;
         return(
           <View
           key={index}

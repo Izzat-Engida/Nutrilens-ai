@@ -4,24 +4,25 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ScanCameraView from "@/components/ScanCameraView";
 import ScanReviewView from "@/components/ScanReviewView";
 import ScanSummaryView from "@/components/ScanSummaryView";
-import {
-  DetectedFood,
-  initialDetectedFoods,
-  MealType,
-  ScanStep,
-} from "../../types/scan";
+import { useNutritionStore } from "@/store/nutritionStore";
+import { ScanStep } from "../../types/scan";
 
 const ScanScreen = () => {
   const [step, setStep] = useState<ScanStep>("camera");
   const [flashEnabled, setFlashEnabled] = useState(false);
-  const [foods, setFoods] = useState<DetectedFood[]>(initialDetectedFoods);
-  const [missingFoodText, setMissingFoodText] = useState("");
-  const [mealType, setMealType] = useState<MealType>("lunch");
-  const [scanCount, setScanCount] = useState(0);
+  const scan = useNutritionStore((state) => state.scan);
+  const updateScanPhoto = useNutritionStore((state) => state.updateScanPhoto);
+  const updateScannedBarcode = useNutritionStore((state) => state.updateScannedBarcode);
+  const updatePortion = useNutritionStore((state) => state.updatePortion);
+  const removeFood = useNutritionStore((state) => state.removeFood);
+  const setMissingFoodText = useNutritionStore((state) => state.setMissingFoodText);
+  const setMealType = useNutritionStore((state) => state.setMealType);
+  const resetScanStore = useNutritionStore((state) => state.resetScan);
+  const saveScannedMeal = useNutritionStore((state) => state.saveScannedMeal);
 
   const totals = useMemo(
     () =>
-      foods.reduce(
+      scan.foods.reduce(
         (sum, food) => ({
           calories: sum.calories + food.calories,
           protein: sum.protein + food.protein,
@@ -30,47 +31,26 @@ const ScanScreen = () => {
         }),
         { calories: 0, protein: 0, carbs: 0, fat: 0 }
       ),
-    [foods]
+    [scan.foods]
   );
 
-  const updatePortion = (id: string, direction: "down" | "up") => {
-    setFoods((currentFoods) =>
-      currentFoods.map((food) => {
-        if (food.id !== id) return food;
-
-        const nextGrams =
-          direction === "up"
-            ? food.grams + 25
-            : Math.max(25, food.grams - 25);
-
-        const ratio = nextGrams / food.grams;
-
-        return {
-          ...food,
-          grams: nextGrams,
-          calories: Math.round(food.calories * ratio),
-          protein: Math.round(food.protein * ratio),
-          carbs: Math.round(food.carbs * ratio),
-          fat: Math.round(food.fat * ratio),
-        };
-      })
-    );
+  const startReviewWithPhoto = (photoUri: string) => {
+    updateScanPhoto(photoUri);
+    setStep("review");
   };
 
-  const removeFood = (id: string) => {
-    setFoods((currentFoods) => currentFoods.filter((food) => food.id !== id));
-  };
-
-  const startReview = () => {
-    setScanCount((count) => count + 1);
+  const startReviewWithBarcode = (barcode: string) => {
+    updateScannedBarcode(barcode);
     setStep("review");
   };
 
   const resetScan = () => {
-    setFoods(initialDetectedFoods);
-    setMissingFoodText("");
-    setMealType("lunch");
-    setScanCount(0);
+    resetScanStore();
+    setStep("camera");
+  };
+
+  const saveMeal = () => {
+    saveScannedMeal();
     setStep("camera");
   };
 
@@ -79,10 +59,11 @@ const ScanScreen = () => {
       <SafeAreaView style={styles.container}>
         <ScanCameraView
           flashEnabled={flashEnabled}
-          scanCount={scanCount}
+          scanCount={scan.scanCount}
           onToggleFlash={() => setFlashEnabled((enabled) => !enabled)}
-          onStartReview={startReview}
-          onResetPreview={() => setScanCount(0)}
+          onCapturePhoto={startReviewWithPhoto}
+          onBarcodeScanned={startReviewWithBarcode}
+          onResetPreview={resetScanStore}
         />
       </SafeAreaView>
     );
@@ -92,9 +73,10 @@ const ScanScreen = () => {
     return (
       <SafeAreaView style={styles.container}>
         <ScanReviewView
-          foods={foods}
-          missingFoodText={missingFoodText}
-          scanCount={scanCount}
+          foods={scan.foods}
+          imageUri={scan.capturedPhotoUri}
+          missingFoodText={scan.missingFoodText}
+          scanCount={scan.scanCount}
           onBack={() => setStep("camera")}
           onReset={resetScan}
           onChangeMissingFood={setMissingFoodText}
@@ -111,12 +93,13 @@ const ScanScreen = () => {
     <SafeAreaView style={styles.container}>
       <ScanSummaryView
         totals={totals}
-        scanCount={scanCount}
-        mealType={mealType}
-        missingFoodText={missingFoodText}
+        imageUri={scan.capturedPhotoUri}
+        scanCount={scan.scanCount}
+        mealType={scan.mealType}
+        missingFoodText={scan.missingFoodText}
         onBack={() => setStep("review")}
         onSelectMealType={setMealType}
-        onSave={resetScan}
+        onSave={saveMeal}
       />
     </SafeAreaView>
   );

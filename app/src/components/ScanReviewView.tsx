@@ -14,6 +14,7 @@ import { DetectedFood } from "../types/scan";
 
 type ScanReviewViewProps = {
   foods: DetectedFood[];
+  imageUri?: string;
   missingFoodText: string;
   scanCount: number;
   onBack: () => void;
@@ -27,6 +28,7 @@ type ScanReviewViewProps = {
 
 const ScanReviewView = ({
   foods,
+  imageUri,
   missingFoodText,
   scanCount,
   onBack,
@@ -54,20 +56,20 @@ const ScanReviewView = ({
         <View style={styles.titleBlockCentered}>
           <Text style={styles.screenTitle}>Review Meal</Text>
           <Text style={styles.screenSubtitle}>
-            Adjust the mock detection before calculating.
+            Adjust the store results before calculating.
           </Text>
         </View>
 
         <View style={styles.iconButtonGhost} />
       </View>
 
-      <MealPreview scanCount={scanCount} compact />
+      <MealPreview imageUri={imageUri} scanCount={scanCount} compact />
 
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Detected Foods</Text>
         <View style={styles.aiBadge}>
           <Sparkles size={14} color="#0071E3" />
-          <Text style={styles.aiBadgeText}>Mock AI</Text>
+          <Text style={styles.aiBadgeText}>Store data</Text>
         </View>
       </View>
 

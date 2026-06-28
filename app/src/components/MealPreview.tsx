@@ -1,24 +1,29 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { Sparkles } from "lucide-react-native";
 
 type MealPreviewProps = {
   scanCount: number;
   compact?: boolean;
+  imageUri?: string;
 };
 
-const MealPreview = ({ scanCount, compact = false }: MealPreviewProps) => {
+const MealPreview = ({ scanCount, compact = false, imageUri }: MealPreviewProps) => {
   return (
     <View style={[styles.previewShell, compact && styles.previewShellCompact]}>
-      <View style={styles.mockCamera}>
-        <View style={styles.tableSurface}>
-          <View style={styles.plate}>
-            <View style={styles.ricePatch} />
-            <View style={styles.proteinPatch} />
-            <View style={styles.greensPatch} />
+      <View style={styles.previewCamera}>
+        {imageUri ? (
+          <Image source={{ uri: imageUri }} style={styles.photoPreview} />
+        ) : (
+          <View style={styles.tableSurface}>
+            <View style={styles.plate}>
+              <View style={styles.ricePatch} />
+              <View style={styles.proteinPatch} />
+              <View style={styles.greensPatch} />
+            </View>
+            <View style={styles.cup} />
           </View>
-          <View style={styles.cup} />
-        </View>
+        )}
 
         {!compact && (
           <View style={styles.scanFrame}>
@@ -32,7 +37,11 @@ const MealPreview = ({ scanCount, compact = false }: MealPreviewProps) => {
         <View style={styles.previewPill}>
           <Sparkles size={14} color="#FFFFFF" />
           <Text style={styles.previewPillText}>
-            {scanCount > 0 ? "Meal photo ready" : "Live preview mock"}
+            {imageUri
+              ? "Meal photo ready"
+              : scanCount > 0
+                ? "Scanned item ready"
+                : "Awaiting scan"}
           </Text>
         </View>
       </View>
@@ -56,7 +65,7 @@ const styles = StyleSheet.create({
   previewShellCompact: {
     marginBottom: 22,
   },
-  mockCamera: {
+  previewCamera: {
     aspectRatio: 0.78,
     backgroundColor: "#111827",
     borderRadius: 8,
@@ -67,6 +76,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#D9E7DF",
     flex: 1,
     justifyContent: "center",
+  },
+  photoPreview: {
+    height: "100%",
+    width: "100%",
   },
   plate: {
     alignItems: "center",

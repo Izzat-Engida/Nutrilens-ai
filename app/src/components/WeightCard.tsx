@@ -1,43 +1,19 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
+import { useNutritionStore, WeightPoint } from "@/store/nutritionStore";
 
 const WeightCard = () => {
-  const [selectedPoint, setSelectedPoint] = useState(null);
-
-  const data = [
-    {
-      value: 73.4,
-      date: "Aug 1",
-      label: "",
-      dataPointText: "73.4",
-    },
-    {
-      value: 73.0,
-      date: "Aug 8",
-      label: "",
-      dataPointText: "73.0",
-    },
-    {
-      value: 72.6,
-      date: "Aug 15",
-      label: "",
-      dataPointText: "72.6",
-    },
-    {
-      value: 72.0,
-      date: "Aug 22",
-      label: "",
-      dataPointText: "72.0",
-    },
-  ];
+  const [selectedPoint, setSelectedPoint] = useState<WeightPoint | null>(null);
+  const data = useNutritionStore((state) => state.weightProgress);
+  const currentWeightKg = useNutritionStore((state) => state.currentWeightKg);
 
   return (
     <View style={styles.weightCard}>
       <Text style={styles.weightTitle}>Weight</Text>
 
       <View style={{ flexDirection: "row", alignItems: "baseline" }}>
-  <Text style={styles.value}>72.0</Text>
+  <Text style={styles.value}>{currentWeightKg.toFixed(1)}</Text>
   <Text style={styles.unit}> kg</Text>
 </View>
 
