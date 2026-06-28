@@ -14,7 +14,7 @@ const Home = () => {
 
   return (
     <SafeAreaView style={style.container}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ paddingBottom:  60}}>
         <View style={style.header}>
           <View>
             <Text style={style.greeting}>Good morning</Text>
@@ -89,7 +89,10 @@ const Home = () => {
 
   <ArrowRight size={24} color="#000" />
 </View>
-        <RecentCards data={recentMeals}/>
+
+        
+  <RecentCards data={recentMeals} />
+
       </ScrollView>
 
     </SafeAreaView>
