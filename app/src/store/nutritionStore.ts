@@ -19,6 +19,8 @@ export type RecentMeal = {
   foodName: string;
   calories: number;
   time: string;
+  portion:string;
+  type: MealType;
 };
 
 export type WeightPoint = {
@@ -153,6 +155,8 @@ export const useNutritionStore = create<NutritionStore>((set, get) => ({
       foodName: "Grilled Chicken Breast",
       calories: 220,
       time: "08:15 AM",
+      portion:"1/2",
+      type: "breakfast",
     },
     {
       id: "snack-apple",
@@ -160,6 +164,8 @@ export const useNutritionStore = create<NutritionStore>((set, get) => ({
       foodName: "Apple & Almonds",
       calories: 180,
       time: "11:00 AM",
+      portion:"1/2",
+      type: "snack",
     },
     {
       id: "lunch-beef",
@@ -167,6 +173,8 @@ export const useNutritionStore = create<NutritionStore>((set, get) => ({
       foodName: "Beef Rice Bowl",
       calories: 520,
       time: "01:30 PM",
+      portion:"1 plate",
+      type: "lunch",
     },
     {
       id: "dinner-wrap",
@@ -174,6 +182,8 @@ export const useNutritionStore = create<NutritionStore>((set, get) => ({
       foodName: "Veggie Wrap",
       calories: 320,
       time: "06:45 PM",
+      portion:"3 slices",
+      type: "dinner",
     },
   ],
   weightProgress: [
@@ -260,7 +270,9 @@ export const useNutritionStore = create<NutritionStore>((set, get) => ({
       id: `scan-${Date.now()}`,
       icon: "drumstick",
       foodName: title,
-      calories,
+        calories,
+        portion: "1 plate",
+      type: scan.mealType,
       time: new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
