@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNutritionStore } from "@/store/nutritionStore";
-import { LucideIcon, Cookie, Moon, Sun, Coffee } from 'lucide-react-native';
+import { LucideIcon, Cookie, Moon, Sun, Coffee,ChevronRight,Sparkles } from 'lucide-react-native';
 
 type MealType = "breakfast" | "lunch" | "dinner" | "snack";
 
@@ -107,6 +107,24 @@ const Meals = () => {
             </View>
           );
         })}
+
+
+      <View>
+        <View>
+          <Sparkles color={"#fff"} size={20}/>
+        </View>
+
+        <View>
+        <Text>AI meal recommendations</Text>
+        <Text>Tailored to you remaining macros</Text>
+        </View>
+
+        <View>
+        <ChevronRight color={"gray"} size={20}/>
+        </View>
+      </View>
+
+      
       </ScrollView>
     </SafeAreaView>
   );
