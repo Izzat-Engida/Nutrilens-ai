@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password,check_password
 from rest_framework import serializers
 
-from .models import User
+from .models import User,Profile
 
 
 class LoginSerializer(serializers.Serializer):
@@ -98,7 +98,6 @@ class RefreshTokenSerializer(serializers.Serializer):
         try:
             refresh = RefreshToken(refresh_token)
 
-            # Make sure the user still exists and is active
             user_id = refresh["user_id"]
 
             user = User.objects.get(
@@ -122,3 +121,17 @@ class RefreshTokenSerializer(serializers.Serializer):
             )
 
         return attrs
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profile
+        fields = [
+            "goal",
+            "height_cm",
+            "weight_kg",
+            "gender",
+            "age",
+            "activity_level",
+            "unit_system",
+        ]

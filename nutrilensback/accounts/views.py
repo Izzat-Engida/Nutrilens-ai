@@ -3,12 +3,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 from rest_framework.permissions import IsAuthenticated
-from .models import User
+from .models import User,Profile
 from .serializers import (
     RegisterSerializer,
     LoginSerializer,
     UpdateUserSerializers,
-    RefreshTokenSerializer
+    RefreshTokenSerializer,
+    ProfileSerializer
     )
 
 
@@ -131,4 +132,72 @@ class RefreshTokenView(APIView):
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST,
+        )
+class ProfileView(APIView):
+    permission_classes=[IsAuthenticated]
+
+    def get(self,request):
+        user=request.user
+
+        try:
+            profile=Profile.objects.get(user=user)
+        except Profile.DoesNotExist:
+            return Response(
+                {"error":"Profile not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serlialzer=ProfileSerializer(profile)
+        return Response(
+            serlialzer.data,
+            status=status.HTTP_200_OK
+        )
+    def post(self,request):
+        user=request.user
+
+        if Profile.objects.filter(user=user).exists():
+            return Response(
+                {"error":"profile already exists"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer=ProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            profile=serializer.save(user=user)
+            return Response(
+                {
+                    "message":"Profile created successfully",
+                    "profile":ProfileSerializer(profile).data,
+                },
+                status=status.HTTP_201_CREATED
+            )
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    def put(self,request):
+        user=request.user
+
+        try:
+            profile=Profile.objects.get(user=user)
+        except Profile.DoesNotExist:
+            return Response(
+                {"error":"Profile not Found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer=ProfileSerializer(
+            profile,
+            data=request.data,
+            partial=True,
+        )
+        if serializer.is_valid():
+            profile=serializer.save()
+            return Response(
+                {
+                    "message":"Profile updated successfully.",
+                    "profile":ProfileSerializer(profile).data,
+                },
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
         )
