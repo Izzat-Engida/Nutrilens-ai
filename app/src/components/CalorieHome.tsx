@@ -1,6 +1,6 @@
 import { View, Text,StyleSheet } from 'react-native'
 import {AnimatedCircularProgress} from 'react-native-circular-progress'
-import { useNutritionStore } from '@/store/nutritionStore'
+
 
 
 const Card = ({ name, num }: { name: string; num: number }) => {
@@ -12,12 +12,12 @@ const Card = ({ name, num }: { name: string; num: number }) => {
     )
 }
 const CalorieHome = () => {
-    const calories = useNutritionStore((state) => state.caloriesConsumed);
-    const goal = useNutritionStore((state) => state.calorieGoal);
-    const fill=(calories/goal)*100;
+    // const calories = useNutritionStore((state) => state.caloriesConsumed);
+    // const goal = useNutritionStore((state) => state.calorieGoal);
+    // const fill=(calories/goal)*100;
   return (
     <View style={styles.container}>
-      <AnimatedCircularProgress
+      {/* <AnimatedCircularProgress
        size={250}
        width={20}
        fill={fill}
@@ -37,13 +37,13 @@ const CalorieHome = () => {
             </View>
         )
         }
-      </AnimatedCircularProgress>
+      </AnimatedCircularProgress> */}
     <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",
     marginHorizontal:10
     }}>
-        <Card name="GOAL" num={goal}/>
+        {/* <Card name="GOAL" num={goal}/>
         <Card name="EATEN" num={calories}/>
-        <Card name ="LEFT" num={goal-calories}/>
+        <Card name ="LEFT" num={goal-calories}/> */}
     </View>
     </View>
   )

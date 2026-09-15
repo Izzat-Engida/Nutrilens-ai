@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useNutritionStore } from "@/store/nutritionStore";
+
 import { LucideIcon, Cookie, Moon, Sun, Coffee,ChevronRight,Sparkles } from 'lucide-react-native';
 
 type MealType = "breakfast" | "lunch" | "dinner" | "snack";
@@ -33,19 +33,19 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 const Meals = () => {
-  const recentMeals = useNutritionStore((state) => state.recentMeals) ;
-  const totalCalories = recentMeals.reduce((sum, meal) => sum + meal.calories, 0);
+  const recentMeals = ''
+  const totalCalories = ''
 
   const groupOrder: MealType[] = [];
   const grouped: Record<string, RecentMeal[]> = {};
 
-  recentMeals.forEach((meal) => {
-    if (!grouped[meal.type]) {
-      grouped[meal.type] = [];
-      groupOrder.push(meal.type);
-    }
-    grouped[meal.type].push(meal);
-  });
+  // recentMeals.forEach((meal) => {
+  //   if (!grouped[meal.type]) {
+  //     grouped[meal.type] = [];
+  //     groupOrder.push(meal.type);
+  //   }
+  //   grouped[meal.type].push(meal);
+  // });
 
   return (
     <SafeAreaView style={styles.container}>

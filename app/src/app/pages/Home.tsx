@@ -6,11 +6,11 @@ import BentoCards from '@/components/BentoCards'
 import RecentCards from '@/components/RecentCards'
 import { Sparkles,ArrowRight } from 'lucide-react-native'
 import { Bell } from "lucide-react-native";
-import { useNutritionStore } from '@/store/nutritionStore'
+
 const Home = () => {
-  const user = useNutritionStore((state) => state.user);
-  const insight = useNutritionStore((state) => state.insight);
-  const recentMeals = useNutritionStore((state) => state.recentMeals);
+  const user = {}
+  const insight = {}
+  const recentMeals = {}
 
   return (
     <SafeAreaView style={style.container}>
@@ -18,14 +18,14 @@ const Home = () => {
         <View style={style.header}>
           <View>
             <Text style={style.greeting}>Good morning</Text>
-            <Text style={style.name}>{user.name}</Text>
+            <Text style={style.name}>{}</Text>
           </View>
           <View style={style.rightSection}>
             <TouchableOpacity style={style.bellContainer}>
           <Bell size={22} color="#222" />
         </TouchableOpacity>
         <View style={style.avatar}>
-        <Text style={style.avatarText}>{user.initials}</Text>
+        <Text style={style.avatarText}>{}</Text>
         </View>
           </View>
         </View>
@@ -83,7 +83,7 @@ const Home = () => {
       }}
       numberOfLines={2}
     >
-      {insight}
+      {/* {insight} */}
     </Text>
   </View>
 
@@ -91,7 +91,7 @@ const Home = () => {
 </View>
 
         
-  <RecentCards data={recentMeals} />
+  {/* <RecentCards data={} /> */}
 
       </ScrollView>
 

@@ -3,7 +3,7 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-nativ
 import { SafeAreaView } from "react-native-safe-area-context";
 import ScanCameraView from "@/components/ScanCameraView";
 import ScanSummaryView from "@/components/ScanSummaryView";
-import { useNutritionStore } from "@/store/nutritionStore";
+
 import { ScanStep } from "../../types/scan";
 import DetectedFoodCard from "@/components/DetectedFoodCard";
 import { ChevronRight, RefreshCcw, Sparkles } from "lucide-react-native";
@@ -13,29 +13,21 @@ const ScanScreen = () => {
   const [flashEnabled, setFlashEnabled] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [previewPhotoUri, setPreviewPhotoUri] = useState<string | undefined>();
-  const scan = useNutritionStore((state) => state.scan);
-  const updateScanPhoto = useNutritionStore((state) => state.updateScanPhoto);
-  const updateScannedBarcode = useNutritionStore((state) => state.updateScannedBarcode);
-  const updatePortion = useNutritionStore((state) => state.updatePortion);
-  const removeFood = useNutritionStore((state) => state.removeFood);
-  const setMissingFoodText = useNutritionStore((state) => state.setMissingFoodText);
-  const setMealType = useNutritionStore((state) => state.setMealType);
-  const resetScanStore = useNutritionStore((state) => state.resetScan);
-  const saveScannedMeal = useNutritionStore((state) => state.saveScannedMeal);
+ 
 
-  const totals = useMemo(
-    () =>
-      scan.foods.reduce(
-        (sum, food) => ({
-          calories: sum.calories + food.calories,
-          protein: sum.protein + food.protein,
-          carbs: sum.carbs + food.carbs,
-          fat: sum.fat + food.fat,
-        }),
-        { calories: 0, protein: 0, carbs: 0, fat: 0 }
-      ),
-    [scan.foods]
-  );
+  // const totals = useMemo(
+  //   () =>
+  //     scan.foods.reduce(
+  //       (sum, food) => ({
+  //         calories: sum.calories + food.calories,
+  //         protein: sum.protein + food.protein,
+  //         carbs: sum.carbs + food.carbs,
+  //         fat: sum.fat + food.fat,
+  //       }),
+  //       { calories: 0, protein: 0, carbs: 0, fat: 0 }
+  //     ),
+  //   [scan.foods]
+  // );
 
   useEffect(() => {
     if (!isAnalyzing) return;
@@ -49,13 +41,13 @@ const ScanScreen = () => {
   }, [isAnalyzing]);
 
   const startReviewWithPhoto = (photoUri: string) => {
-    updateScanPhoto(photoUri);
+    //updateScanPhoto(photoUri);
     setPreviewPhotoUri(photoUri);
     setIsAnalyzing(true);
   };
 
   const startReviewWithBarcode = (barcode: string) => {
-    updateScannedBarcode(barcode);
+    //updateScannedBarcode(barcode);
     setPreviewPhotoUri(undefined);
     setIsAnalyzing(true);
   };
@@ -63,20 +55,20 @@ const ScanScreen = () => {
   const resetScan = () => {
     setIsAnalyzing(false);
     setPreviewPhotoUri(undefined);
-    resetScanStore();
+    //resetScanStore();
     setStep("camera");
   };
 
   const saveMeal = () => {
     setPreviewPhotoUri(undefined);
-    saveScannedMeal();
+    //saveScannedMeal();
     setStep("camera");
   };
 
   const resetPreview = () => {
     setIsAnalyzing(false);
     setPreviewPhotoUri(undefined);
-    resetScanStore();
+    //resetScanStore();
      setStep("camera");
   };
 
@@ -94,7 +86,7 @@ const ScanScreen = () => {
         </View>
       </View>
 
-      <View style={styles.foodList}>
+      {/* <View style={styles.foodList}>
         {scan.foods.map((food) => (
           <DetectedFoodCard
             key={food.id}
@@ -104,18 +96,18 @@ const ScanScreen = () => {
             onRemove={() => removeFood(food.id)}
           />
         ))}
-      </View>
+      </View> */}
 
       <View style={styles.inputBlock}>
         <Text style={styles.inputLabel}>Anything missing?</Text>
-        <TextInput
+        {/* <TextInput
           multiline
           onChangeText={setMissingFoodText}
           placeholder="Example: one Coke and two boiled eggs"
           placeholderTextColor="#9CA3AF"
           style={styles.textArea}
           value={scan.missingFoodText}
-        />
+        /> */}
       </View>
 
       <View style={styles.actionRow}>
@@ -124,7 +116,7 @@ const ScanScreen = () => {
           <Text style={styles.secondaryButtonText}>Re-scan</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           disabled={scan.foods.length === 0}
           onPress={() => setStep("summary")}
           style={[
@@ -134,7 +126,7 @@ const ScanScreen = () => {
         >
           <Text style={styles.primaryButtonText}>Calculate</Text>
           <ChevronRight size={18} color="#FFFFFF" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );
@@ -142,7 +134,7 @@ const ScanScreen = () => {
   if (step === "camera" || step === "review") {
     return (
       <SafeAreaView edges={[]} style={styles.cameraContainer}>
-        <ScanCameraView
+        {/* <ScanCameraView
           flashEnabled={flashEnabled}
           isAnalyzing={isAnalyzing}
           previewPhotoUri={previewPhotoUri || scan.capturedPhotoUri}
@@ -152,14 +144,14 @@ const ScanScreen = () => {
           onCapturePhoto={startReviewWithPhoto}
           onBarcodeScanned={startReviewWithBarcode}
           onResetPreview={resetPreview}
-        />
+        /> */}
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScanSummaryView
+      {/* <ScanSummaryView
         totals={totals}
         imageUri={scan.capturedPhotoUri}
         scanCount={scan.scanCount}
@@ -168,7 +160,7 @@ const ScanScreen = () => {
         onBack={() => setStep("review")}
         onSelectMealType={setMealType}
         onSave={saveMeal}
-      />
+      /> */}
     </SafeAreaView>
   );
 };

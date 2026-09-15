@@ -3,14 +3,39 @@ import React,{useState} from 'react'
 import { Sparkles,Lock,Eye,EyeOff,Mail,ArrowRight } from "lucide-react-native";
 import {useRouter} from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useLoginMutation } from '@/store/auth/authApi';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '@/store/auth/authSlice';
 const SignIN = () => {
   const router=useRouter()
   const [email,setEmail]=useState("")
   const [password,setPassword]=useState("")
   const [showPassword, setShowPassword] = useState(false);
 
+  const [login]=useLoginMutation();
+  const dispatch=useDispatch();
   const handleSignin=async ()=>{
-    router.replace('/(onboarding)/Goals')
+
+    try{
+      const res=await login({
+        email,
+        password
+      }).unwrap();
+      
+      console.log("login succefull: ", res)
+      dispatch(
+        setCredentials({
+          accessToken:res.tokens.access,
+          refreshToken:res.tokens.refresh,
+          user:res.user,
+        })
+      )
+
+      router.replace('/(onboarding)/Goals')
+    }catch(error){
+      console.log('Login failed: ',error)
+    }
+
   }
   return (
     <SafeAreaView style={styles.container}>

@@ -3,56 +3,56 @@ import React from 'react'
 import {Drumstick,Droplet,Wheat,CircleDot} from "lucide-react-native"
 import * as Progress from 'react-native-progress';
 import WeightCard from './WeightCard';
-import { MacroProgress, useNutritionStore } from '@/store/nutritionStore';
+
 
 const TopBarIcon = ({ Icon, color }: { Icon: React.ComponentType<any>; color: string }) => (
   <Icon size={28} color={color}  style={{backgroundColor:"#0066cc42",borderRadius:100}} />
 )
 
 
-const FoodCards=({icon,total,consumed,unit,title}: Omit<MacroProgress, "key">)=>{
-    const temp: Record<string, React.ComponentType<any>> = {
-      Drumstick,
-      Droplet,
-      Wheat,
-      CircleDot,
-    }
+// const FoodCards=({icon,total,consumed,unit,title}: Omit<MacroProgress, "key">)=>{
+//     const temp: Record<string, React.ComponentType<any>> = {
+//       Drumstick,
+//       Droplet,
+//       Wheat,
+//       CircleDot,
+//     }
 
-    const SelectedIcon = temp[icon] || CircleDot
+//     const SelectedIcon = temp[icon] || CircleDot
 
-    return(
-    <View style={styles.card}>
-      <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
-      <TopBarIcon Icon={SelectedIcon} color="#0066CC" />
-      <Text style={{color:"gray",fontSize:15}}>{total}{unit}</Text>
-      </View>
-      <View style={{flexDirection:"row",alignItems:"center"}}>
-        <Text style={{color:"black",fontSize:30,fontWeight:"bold",marginRight:2}}>{consumed}</Text>
-        <Text style={{color:"gray",fontSize:20}}>{unit}</Text>
-      </View>
-      <Text style={{color:"gray",fontSize:19}}>{title}</Text>
-      <Progress.Bar animated={true} progress={(consumed/total)} width={150} color="#0066CC" unfilledColor="#f5f5f7"
-      borderColor='#f5f5f7' 
-       />
-    </View>
-    )
-}
+//     return(
+//     <View style={styles.card}>
+//       <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
+//       <TopBarIcon Icon={SelectedIcon} color="#0066CC" />
+//       <Text style={{color:"gray",fontSize:15}}>{total}{unit}</Text>
+//       </View>
+//       <View style={{flexDirection:"row",alignItems:"center"}}>
+//         <Text style={{color:"black",fontSize:30,fontWeight:"bold",marginRight:2}}>{consumed}</Text>
+//         <Text style={{color:"gray",fontSize:20}}>{unit}</Text>
+//       </View>
+//       <Text style={{color:"gray",fontSize:19}}>{title}</Text>
+//       <Progress.Bar animated={true} progress={(consumed/total)} width={150} color="#0066CC" unfilledColor="#f5f5f7"
+//       borderColor='#f5f5f7' 
+//        />
+//     </View>
+//     )
+// }
 
 
 const BentoCards = () => {
-  const macros = useNutritionStore((state) => state.macros);
-  const streakDays = useNutritionStore((state) => state.streakDays);
+  //const macros = useNutritionStore((state) => state.macros);
+  //const streakDays = useNutritionStore((state) => state.streakDays);
 
   return (
     <View style={styles.container}>
-        <View
+        {/* <View
         style={styles.GridView}
         >
   
       {macros.map(({ key, ...macro }) => (
         <FoodCards key={key} {...macro} />
       ))}
-        </View>
+        </View> */}
       <View style={styles.statsRow}>
   <WeightCard />
 
@@ -60,7 +60,7 @@ const BentoCards = () => {
     <Text style={styles.cardLabel}>STREAK</Text>
 
     <View style={{ marginTop: "auto" }}>
-      <Text style={styles.streakNumber}>{streakDays}</Text>
+      <Text style={styles.streakNumber}>{0}</Text>
       <Text style={styles.streakDays}>days</Text>
     </View>
   </View>

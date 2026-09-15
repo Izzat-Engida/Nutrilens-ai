@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { Sparkles, Lock, Eye, EyeOff, Mail, ArrowRight, User, Check } from "lucide-react-native";
 import { useRouter } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from 'react-redux';
+import { useSignupMutation } from '@/store/auth/authApi';
 
 const Signup = () => {
   const router = useRouter()
@@ -14,8 +16,21 @@ const Signup = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [agreed, setAgreed] = useState(false)
 
-  const handleSignup = async () => {
 
+
+  const [signup]=useSignupMutation();
+  const handleSignup = async () => {
+    try{
+      const res=await signup({
+        full_name:fullName,
+        email,
+        password,
+      }).unwrap();
+      console.log("Registration successful: ",res);
+      router.replace('/(onboarding)/Goals')
+    }catch(error){
+      console.log("Registration Failed: ",error);
+    }
   }
 
   return (

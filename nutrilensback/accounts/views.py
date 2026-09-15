@@ -25,7 +25,8 @@ class RegisterView(APIView):
                     "message": "Account created successfully",
                     "user": {
                         "id": user.id,
-                        "full_name": user.get_full_name(),
+                        "first_name": user.first_name,
+                        "last_name": user.last_name,
                         "email": user.email,
                     },
                 },
