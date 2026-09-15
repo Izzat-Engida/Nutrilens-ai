@@ -230,7 +230,7 @@ const AboutYou = () => {
             setWeight(value)
             dispatch(
               setOnboardingData({
-                weight_kg:weight
+                weight_kg:value
               })
             )
           }} />

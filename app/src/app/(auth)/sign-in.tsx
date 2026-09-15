@@ -6,17 +6,22 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLoginMutation } from '@/store/auth/authApi';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '@/store/auth/authSlice';
+import { clearOnboarding } from '@/store/onboarding/onboardingSlice';
+import { useLazyGetProfileQuery } from '@/store/onboarding/profileApi';
 const SignIN = () => {
   const router=useRouter()
   const [email,setEmail]=useState("")
   const [password,setPassword]=useState("")
   const [showPassword, setShowPassword] = useState(false);
 
-  const [login]=useLoginMutation();
+  const [login, { isLoading: isLoggingIn }]=useLoginMutation();
+  const [getProfile, { isLoading: isCheckingProfile }] = useLazyGetProfileQuery();
   const dispatch=useDispatch();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const handleSignin=async ()=>{
 
     try{
+      setErrorMessage(null)
       const res=await login({
         email,
         password
@@ -31,9 +36,24 @@ const SignIN = () => {
         })
       )
 
-      router.replace('/(onboarding)/Goals')
+      try {
+        await getProfile().unwrap();
+        router.replace('/pages/Home')
+      } catch (profileError) {
+        const status = typeof profileError === 'object' && profileError !== null && 'status' in profileError
+          ? profileError.status
+          : undefined;
+
+        if (status === 404) {
+          dispatch(clearOnboarding());
+          router.replace('/(onboarding)/Goals')
+        } else {
+          setErrorMessage('We could not check your profile. Please try again.')
+        }
+      }
     }catch(error){
       console.log('Login failed: ',error)
+      setErrorMessage('Your email or password is incorrect.')
     }
 
   }
@@ -97,7 +117,8 @@ contentContainerStyle={{ flexGrow: 1 }}
             <Text style={{ color: "#0071E3", fontWeight: "600" }}>Forgot password?</Text>
           </TouchableOpacity>
           </View>
-          <TouchableOpacity activeOpacity={0.8} onPress={handleSignin}>
+      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+      <TouchableOpacity activeOpacity={0.8} onPress={handleSignin} disabled={isLoggingIn || isCheckingProfile}>
         <View style={styles.signInButton}>
           <Text style={styles.signInText}>Sign in</Text>
           <ArrowRight size={22} color="white" style={{ marginLeft: 8 }} />
@@ -202,7 +223,7 @@ const styles=StyleSheet.create({
   shadowRadius: 10,
   elevation: 6,
 },
-signInText: {
+  signInText: {
   color: "white",
   fontSize: 18,
   fontWeight: "700",
@@ -211,6 +232,12 @@ signInText: {
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 25,
+  },
+  errorText: {
+    color: '#B42318',
+    fontSize: 14,
+    marginTop: 12,
+    textAlign: 'center',
   },
   dividerLine: {
     flex: 1,

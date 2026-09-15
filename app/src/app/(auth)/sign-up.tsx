@@ -4,7 +4,8 @@ import { Sparkles, Lock, Eye, EyeOff, Mail, ArrowRight, User, Check } from "luci
 import { useRouter } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from 'react-redux';
-import { useSignupMutation } from '@/store/auth/authApi';
+import { useLoginMutation, useSignupMutation } from '@/store/auth/authApi';
+import { setCredentials } from '@/store/auth/authSlice';
 
 const Signup = () => {
   const router = useRouter()
@@ -19,15 +20,23 @@ const Signup = () => {
 
 
   const [signup]=useSignupMutation();
+  const [login] = useLoginMutation();
+  const dispatch = useDispatch();
   const handleSignup = async () => {
     try{
-      const res=await signup({
+      await signup({
         full_name:fullName,
         email,
         password,
       }).unwrap();
-      console.log("Registration successful: ",res);
-      router.replace('/(onboarding)/Goals')
+
+      const loginResponse = await login({ email, password }).unwrap();
+      dispatch(setCredentials({
+        accessToken: loginResponse.tokens.access,
+        refreshToken: loginResponse.tokens.refresh,
+        user: loginResponse.user,
+      }));
+      router.replace('/pages/Home');
     }catch(error){
       console.log("Registration Failed: ",error);
     }

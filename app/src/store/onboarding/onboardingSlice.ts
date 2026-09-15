@@ -1,7 +1,7 @@
 import {createSlice,PayloadAction} from '@reduxjs/toolkit';
 
 
-interface OnboardingState{
+export interface OnboardingState{
     goal:string|null;
     gender:string|null;
     age:number|null;

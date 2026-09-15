@@ -8,9 +8,33 @@ import AboutYou from '@/components/AboutYou'
 import TargetCard from '@/components/TargetCard'
 import ActiveCard from '@/components/ActiveCard'
 import { useRouter } from 'expo-router'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { useCreateProfileMutation } from '@/store/onboarding/profileApi';
+import { clearOnboarding } from '@/store/onboarding/onboardingSlice';
+import type { OnboardingState } from '@/store/onboarding/onboardingSlice';
+
+const requiredOnboardingFields = [
+  ['goal', 'a goal'],
+  ['gender', 'your sex'],
+  ['age', 'your age'],
+  ['height_cm', 'your height'],
+  ['weight_kg', 'your weight'],
+  ['activity_level', 'your activity level'],
+  ['target_weight_kg', 'your target weight'],
+  ['pace', 'a pace'],
+] as const;
+
+type CompleteOnboardingState = {
+  [Key in keyof OnboardingState]: NonNullable<OnboardingState[Key]>
+};
+
+const isCompleteOnboarding = (
+  data: OnboardingState,
+): data is CompleteOnboardingState => requiredOnboardingFields.every(([field]) => {
+  const value = data[field];
+  return value !== null && value !== undefined && value !== '';
+});
 
 interface slide{
   id:string,
@@ -47,8 +71,10 @@ const carouselHeight = Math.min(640, Math.max(360, height - 205))
 
 const Goals = () => {
   const router=useRouter()
+  const dispatch = useDispatch()
   const [activeIndex,setActiveIndex]=useState(0)
   const carouselRef=useRef<ICarouselInstance>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   
   const onboarding = useSelector( 
     (state:RootState)=>state.onboarding
@@ -56,24 +82,37 @@ const Goals = () => {
   const [createProfile,{isLoading}]=useCreateProfileMutation()
   const handleNext=async()=>{
     if(activeIndex<slides.length-1){
+        setErrorMessage(null)
         carouselRef.current?.next()
         return;
     }
+    if (!isCompleteOnboarding(onboarding)) {
+      const missingField = requiredOnboardingFields.find(([field]) => {
+        const value = onboarding[field];
+        return value === null || value === undefined || value === '';
+      });
+      setErrorMessage(`Please provide ${missingField?.[1] ?? 'all required information'} before continuing.`)
+      return
+    }
+
+    setErrorMessage(null)
     try{
       await createProfile({
-        goal:onboarding.goal!,
-        height_cm:onboarding.height_cm!,
-        weight_kg:onboarding.weight_kg!,
-        gender:onboarding.gender!,
-        age:onboarding.age!,
-        activity_level:onboarding.activity_level!,
-        target_weight_kg:onboarding.target_weight_kg!,
-        pace:onboarding.pace!,
+        goal:onboarding.goal,
+        height_cm:onboarding.height_cm,
+        weight_kg:onboarding.weight_kg,
+        gender:onboarding.gender,
+        age:onboarding.age,
+        activity_level:onboarding.activity_level,
+        target_weight_kg:onboarding.target_weight_kg,
+        pace:onboarding.pace,
         unit_system:onboarding.unit_system,
       }).unwrap();
+      dispatch(clearOnboarding())
       router.replace('/pages/Home')
     }catch(error){
       console.log("profile creation failed: ",error)
+      setErrorMessage('We could not save your profile. Please check your answers and try again.')
     }
   }
   const handlePrev=()=>{
@@ -145,7 +184,8 @@ const Goals = () => {
       )}
       />
       <View style={styles.buttonWrapper}>
-        <TouchableOpacity style={styles.button} onPress={handleNext}>
+        {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+        <TouchableOpacity style={styles.button} onPress={handleNext} disabled={isLoading}>
             <Text style={styles.buttonText}>
               {activeIndex === slides.length - 1 ? 'Get Started' : 'Continue'}
                 </Text>
@@ -236,6 +276,12 @@ const styles = StyleSheet.create({
     marginTop: "auto",
     paddingHorizontal: 20,
     paddingBottom: 30,
+  },
+  errorText: {
+    color: '#B42318',
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 10,
   },
   button: {
     flexDirection: "row",

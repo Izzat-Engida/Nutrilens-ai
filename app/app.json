@@ -37,6 +37,12 @@
       ],
       "expo-font",
       [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true
+        }
+      ],
+      [
         "expo-camera",
         {
           "cameraPermission": "Allow Nutrilens to access your camera",

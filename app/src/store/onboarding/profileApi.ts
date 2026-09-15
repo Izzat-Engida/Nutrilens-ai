@@ -1,6 +1,6 @@
 import {apiSlice} from "../api/apiSlice"
 
-interface ProfileData{
+export interface ProfileData{
     goal:string;
     gender:string;
     age:number;
@@ -18,6 +18,12 @@ interface ProfileResponse{
 
 export const profileApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    getProfile: builder.query<ProfileData, void>({
+      query: () => ({
+        url: "/api/accounts/profile/",
+        method: "GET",
+      }),
+    }),
     createProfile: builder.mutation<ProfileResponse, ProfileData>({
       query: (body) => ({
         url: "/api/accounts/profile/",
@@ -25,9 +31,18 @@ export const profileApi = apiSlice.injectEndpoints({
         body,
       }),
     }),
+    updateProfile: builder.mutation<ProfileResponse, Partial<ProfileData>>({
+      query: (body) => ({
+        url: "/api/accounts/profile/",
+        method: "PUT",
+        body,
+      }),
+    }),
   }),
 });
 
 export const {
+  useLazyGetProfileQuery,
   useCreateProfileMutation,
+  useUpdateProfileMutation,
 } = profileApi;
