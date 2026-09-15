@@ -8,6 +8,9 @@ import AboutYou from '@/components/AboutYou'
 import TargetCard from '@/components/TargetCard'
 import ActiveCard from '@/components/ActiveCard'
 import { useRouter } from 'expo-router'
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import { useCreateProfileMutation } from '@/store/onboarding/profileApi';
 
 interface slide{
   id:string,
@@ -46,12 +49,31 @@ const Goals = () => {
   const router=useRouter()
   const [activeIndex,setActiveIndex]=useState(0)
   const carouselRef=useRef<ICarouselInstance>(null)
-
-  const handleNext=()=>{
+  
+  const onboarding = useSelector( 
+    (state:RootState)=>state.onboarding
+  )
+  const [createProfile,{isLoading}]=useCreateProfileMutation()
+  const handleNext=async()=>{
     if(activeIndex<slides.length-1){
         carouselRef.current?.next()
-    }else{
-       router.replace('/pages/Home')
+        return;
+    }
+    try{
+      await createProfile({
+        goal:onboarding.goal!,
+        height_cm:onboarding.height_cm!,
+        weight_kg:onboarding.weight_kg!,
+        gender:onboarding.gender!,
+        age:onboarding.age!,
+        activity_level:onboarding.activity_level!,
+        target_weight_kg:onboarding.target_weight_kg!,
+        pace:onboarding.pace!,
+        unit_system:onboarding.unit_system,
+      }).unwrap();
+      router.replace('/pages/Home')
+    }catch(error){
+      console.log("profile creation failed: ",error)
     }
   }
   const handlePrev=()=>{

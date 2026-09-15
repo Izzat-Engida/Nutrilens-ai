@@ -133,5 +133,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "gender",
             "age",
             "activity_level",
+            "target_weight_kg",
+            "pace",
             "unit_system",
         ]

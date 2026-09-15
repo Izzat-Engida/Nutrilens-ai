@@ -4,7 +4,8 @@ import {
 } from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import {setOnboardingData} from "@/store/onboarding/onboardingSlice";
+import { useDispatch } from 'react-redux';
 
 const cmToInches = (cm: number) => Math.round(cm / 2.54)
 const inchesToCm = (inches: number) => Math.round(inches * 2.54)
@@ -141,6 +142,8 @@ const AboutYou = () => {
   const [heightUnit, setHeightUnit] = useState<"cm" | "ft">("cm")
   const [weightUnit, setWeightUnit] = useState<"kg" | "lb">("kg")
 
+  const dispatch = useDispatch();
+
   return (
     <View style={styles.container}>
 
@@ -148,7 +151,15 @@ const AboutYou = () => {
         <Text style={[styles.subheading, { fontSize: 13, marginBottom: 10, letterSpacing: 1 }]}>SEX</Text>
         <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 24 }}>
           {["Female", "Male", "Other"].map((label, index) => (
-            <TouchableOpacity key={label} onPress={() => setSex(index)}>
+            <TouchableOpacity key={label} onPress={() => {
+              setSex(index);
+              const gender=["Female","Male","Other"][index];
+              dispatch(
+                setOnboardingData({
+                  gender
+                })
+              )
+            }}>
               <View style={[styles.genderCard, {
                 borderColor: (sex === index) ? "#0071E3" : "#f5f5f7",
                 shadowColor: (sex === index) ? "#0071E3" : "transparent",
@@ -165,14 +176,28 @@ const AboutYou = () => {
         </View>
 
         <Text style={[styles.subheading, { fontSize: 13, marginBottom: 4, letterSpacing: 1 }]}>AGE</Text>
-        <RulerPicker min={13} max={100} value={age} unit="yrs" majorEvery={5} onChange={setAge} />
+        <RulerPicker min={13} max={100} value={age} unit="yrs" majorEvery={5} onChange={(value)=>{
+          setAge(value)
+          dispatch(
+            setOnboardingData({
+              age:value,
+            })
+          )
+        }} />
 
         <View style={styles.labelRow}>
           <Text style={[styles.subheading, { fontSize: 13, letterSpacing: 1 }]}>HEIGHT</Text>
           <UnitToggle options={["cm", "ft"]} selected={heightUnit} onSelect={(u) => setHeightUnit(u as "cm" | "ft")} />
         </View>
         {heightUnit === "cm" ? (
-          <RulerPicker min={100} max={250} value={height} unit="cm" majorEvery={10} onChange={setHeight} />
+          <RulerPicker min={100} max={250} value={height} unit="cm" majorEvery={10} onChange={(value)=>{
+            setHeight(value);
+            dispatch(
+              setOnboardingData({
+                height_cm:value
+              })
+            )
+          }} />
         ) : (
           <RulerPicker
             min={cmToInches(100)}
@@ -182,7 +207,17 @@ const AboutYou = () => {
             majorEvery={12}
             formatMajorLabel={(v) => `${Math.floor(v / 12)}'`}
             formatBigValue={(v) => `${Math.floor(v / 12)}'${v % 12}"`}
-            onChange={(inches) => setHeight(inchesToCm(inches))}
+            onChange={(value)=>{
+              const cm=inchesToCm(value);
+
+              setHeight(value);
+
+              dispatch(
+                setOnboardingData({
+                  height_cm:cm
+                })
+              )
+            }}
           />
         )}
 
@@ -191,7 +226,14 @@ const AboutYou = () => {
           <UnitToggle options={["kg", "lb"]} selected={weightUnit} onSelect={(u) => setWeightUnit(u as "kg" | "lb")} />
         </View>
         {weightUnit === "kg" ? (
-          <RulerPicker min={30} max={300} value={weight} unit="kg" majorEvery={10} onChange={setWeight} />
+          <RulerPicker min={30} max={300} value={weight} unit="kg" majorEvery={10} onChange={(value)=>{
+            setWeight(value)
+            dispatch(
+              setOnboardingData({
+                weight_kg:weight
+              })
+            )
+          }} />
         ) : (
           <RulerPicker
             min={kgToLb(30)}
@@ -199,7 +241,16 @@ const AboutYou = () => {
             value={kgToLb(weight)}
             unit="lb"
             majorEvery={20}
-            onChange={(lb) => setWeight(lbToKg(lb))}
+            onChange={(value)=>{
+              const temp=lbToKg(value)
+              setWeight(value)
+
+              dispatch(
+                setOnboardingData({
+                  weight_kg:temp
+                })
+              )
+            }}
           />
         )}
       </View>

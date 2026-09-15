@@ -2,15 +2,20 @@ import { View, Text,StyleSheet,TouchableOpacity} from 'react-native'
 import {useState} from 'react'
 import {Dumbbell,Minus, TrendingUp,TrendingDown,LucideIcon} from "lucide-react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
+import {setOnboardingData} from "@/store/onboarding/onboardingSlice";
+import { useDispatch } from 'react-redux';
+
 interface ChoiceCardProps{
   Icon:LucideIcon,
   title:string,
   description:string,
   selected?:boolean ,
+  value:string,
   onPress?:()=>void
 }
 
 const ChoiceCard=({Icon,title,description,selected,onPress}:ChoiceCardProps)=>{
+
     return(
         <TouchableOpacity onPress={onPress}
         style={[styles.card,
@@ -37,33 +42,45 @@ const ChoiceCard=({Icon,title,description,selected,onPress}:ChoiceCardProps)=>{
     )
 }
 const GoalCard = () => {
-    const [selected,setSelected]=useState(0)
+  const dispatch=useDispatch();
+  const [selected,setSelected]=useState<number|null>(null)
     const choices=[
         {
             Icon:TrendingDown,
             title:"Lose Weight",
             description:"Steady, sustainable fat loss",
-            
+            value:"lose_weight"
         },
         {
             Icon:Minus,
             title:"Maintain Weight",
             description:"Stay where you are",
-            
+            value:"maintain_weight",
         },
         {
             Icon:TrendingUp,
             title:"Gain Weight",
             description:"Healthy weight gain",
-           
+            value:"gain_weight"
         },
         {
             Icon:Dumbbell,
             title:"Build Muscle",
             description:"Lean mass & strength",
-            
+            value:"build_muscle"
         }
     ]
+
+  const handleSelect = (index: number) => {
+    setSelected(index);
+
+    dispatch(
+      setOnboardingData({
+        goal: choices[index].value,
+      })
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={{width:"100%", alignItems:"center"}}>
@@ -71,7 +88,7 @@ const GoalCard = () => {
             choices.map((choice,index)=>(
                 <ChoiceCard key={index} {...choice} 
                 selected={selected===index}
-                onPress={()=>setSelected(index)}
+                onPress={()=>handleSelect(index)}
                 />
             ))
         }

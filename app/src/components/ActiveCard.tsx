@@ -2,11 +2,15 @@ import { View, Text ,StyleSheet,TouchableOpacity} from 'react-native'
 import {useState} from 'react'
 import {LucideIcon,Sofa,Footprints,Flame,Bike} from "lucide-react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
+import {setOnboardingData} from "@/store/onboarding/onboardingSlice";
+import { useDispatch } from 'react-redux';
+
 interface ChoiceCardProps{
   Icon:LucideIcon,
   title:string,
   description:string,
   selected?:boolean ,
+  value:string,
   onPress?:()=>void
 }
 
@@ -38,33 +42,44 @@ const ChoiceCard=({Icon,title,description,selected,onPress}:ChoiceCardProps)=>{
 }
 const ActiveCard = () => {
 
-const [selected,setSelected]=useState(0)
+const dispatch=useDispatch()
+const [selected,setSelected]=useState<number|null>(null);
+
     const choices=[
         {
             Icon:Sofa,
             title:"Sedentary",
             description:"Mostly sitting,little exercise",
-            
+            value:"sedentary"
         },
         {
             Icon:Footprints,
             title:"Lightly active",
             description:"Walks & light workout 1-3 days a week",
-            
+            value:"lightly_active"
         },
         {
             Icon:Bike,
             title:"Active",
             description:"Exercise 3-5 days a week",
-           
+           value:"active"
         },
         {
             Icon:Flame,
-            title:"VeryActive",
+            title:"Very Active",
             description:"Intense training 6-7 days a week",
-            
+            value:"very_active"
         }
     ]
+  const handleSelect=(index:number)=>{
+    setSelected(index);
+
+    dispatch(
+      setOnboardingData({
+        activity_level:choices[index].value
+      })
+    )
+  }
   return (
       <View style={styles.container}>
           <View style={{width:"100%", alignItems:"center"}}>
@@ -72,7 +87,7 @@ const [selected,setSelected]=useState(0)
                 choices.map((choice,index)=>(
                     <ChoiceCard key={index} {...choice} 
                     selected={selected===index}
-                    onPress={()=>setSelected(index)}
+                    onPress={()=>handleSelect(index)}
                     />
                 ))
             }

@@ -5,6 +5,8 @@ import {useState,useRef,useEffect} from 'react'
 
 import { Sparkles, Target } from 'lucide-react-native'
 import { SafeAreaView } from "react-native-safe-area-context";
+import {setOnboardingData} from "@/store/onboarding/onboardingSlice";
+import { useDispatch } from 'react-redux';
 
 const kgToLb = (kg: number) => Math.round(kg * 2.20462)
 const lbToKg = (lb: number) => Math.round(lb / 2.20462)
@@ -132,13 +134,16 @@ const TargetCard = () => {
     const [pace,setPace]=useState(-1);
     const [weightUnit, setWeightUnit] = useState<"kg" | "lb">("kg")
 
+    const dispatch=useDispatch()
+
+
     const Weight=75;
     const calories=2400
     const paces=[
         {
             label:"Easy",
             valueinKg:0.25,
-            valueinLbs:KgtoLb2(0.25)
+            valueinLbs:KgtoLb2(0.25),
         },{
             label:"Steady",
             valueinKg:0.5,
@@ -149,6 +154,16 @@ const TargetCard = () => {
             valueinLbs:KgtoLb2(0.75)
         }
     ]
+    const handlePress=(index:number)=>{
+      setPace(index)
+      const pvalue=paces[index].label
+
+      dispatch(
+        setOnboardingData({
+          pace:pvalue
+        })
+      )
+    }
     const selectedPace = pace !== -1 ? paces[pace] : null
     const weightdiff=Math.abs(Weight-targetWeight)
     const KCAL_PER_KG_FAT = 7700
@@ -158,6 +173,8 @@ const TargetCard = () => {
     const dailyCalories = selectedPace
       ? Math.round((calories - (selectedPace.valueinKg * KCAL_PER_KG_FAT) / 7) / 10) * 10
       : null
+
+    
   return (
     <SafeAreaView style={styles.container}>
             <View>
@@ -166,7 +183,15 @@ const TargetCard = () => {
         <UnitToggle options={["kg", "lb"]} selected={weightUnit} onSelect={(u) => setWeightUnit(u as "kg" | "lb")} />
         </View>
          {weightUnit === "kg" ? (
-          <RulerPicker min={30} max={300} value={targetWeight} unit="kg" majorEvery={10} onChange={setTargetWeight} />
+          <RulerPicker min={30} max={300} value={targetWeight} unit="kg" majorEvery={10} onChange={(value)=>{
+            setTargetWeight(value);
+
+            dispatch(
+              setOnboardingData({
+                target_weight_kg:value
+              })
+            )
+          }} />
         ) : (
           <RulerPicker
             min={kgToLb(30)}
@@ -174,7 +199,17 @@ const TargetCard = () => {
             value={kgToLb(targetWeight)}
             unit="lb"
             majorEvery={20}
-            onChange={(lb) => setTargetWeight(lbToKg(lb))}
+            onChange={(value)=>{
+              setTargetWeight(value)
+
+              const temp=lbToKg(value)
+
+              dispatch(
+                setOnboardingData({
+                  target_weight_kg:temp
+                })
+              )
+            }}
           />
         )}
       </View>
@@ -183,7 +218,7 @@ const TargetCard = () => {
         <View style={{flexDirection:"row",justifyContent:"space-between",marginBottom:24}}>
         {
             paces.map((data,index)=>(
-                <TouchableOpacity key={index} onPress={()=>setPace(index)}>
+                <TouchableOpacity key={index} onPress={()=>handlePress(index)}>
                 <View style={[styles.paceCard,{
                 borderColor: (pace === index) ? "#0071E3" : "#f5f5f7",
                 shadowColor: (pace === index) ? "#0071E3" : "transparent",

@@ -53,7 +53,10 @@ class Profile(models.Model):
     activity_level = models.CharField(
         max_length=100,
     )
-
+    target_weight_kg=models.FloatField()
+    pace=models.CharField(
+        max_length=50
+    )
     unit_system = models.CharField(
         max_length=10,
         choices=UNIT_CHOICES,
