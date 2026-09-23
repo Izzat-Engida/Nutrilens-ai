@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "nutrition",
     "meals",
     "tracking",
+    "recommendations",
     "food_analysis"
 ]
 
