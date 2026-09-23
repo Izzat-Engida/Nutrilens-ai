@@ -9,4 +9,5 @@ psycopg-binary==3.3.5
 psycopg2-binary==2.9.13
 PyJWT==2.14.0
 python-dotenv==1.2.3
+huggingface-hub>=0.34,<1.0
 sqlparse==0.5.5

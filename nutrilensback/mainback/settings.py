@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "meals",
     "tracking",
     "recommendations",
-    "food_analysis"
+    "food_analysis",
 ]
 
 MIDDLEWARE = [
@@ -114,6 +114,19 @@ PASSWORD_RESET_URL = os.getenv(
     "PASSWORD_RESET_URL",
     "nutrilens://reset-password",
 )
+
+# Food image analysis. Keep credentials server-side; never expose HF_TOKEN to
+# the mobile client or include it in API responses/logs.
+HF_TOKEN = os.getenv("HF_TOKEN", "")
+HF_FOOD_MODEL = os.getenv("HF_FOOD_MODEL", "nateraw/food")
+HF_PROVIDER = os.getenv("HF_PROVIDER", "")
+HF_TIMEOUT = float(os.getenv("HF_TIMEOUT", "30"))
+FOOD_ANALYSIS_MAX_IMAGE_SIZE = int(
+    os.getenv("FOOD_ANALYSIS_MAX_IMAGE_SIZE", str(10 * 1024 * 1024))
+)
+
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
