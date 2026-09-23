@@ -103,6 +103,16 @@ REST_FRAMEWORK = {
         "accounts.authentication.JWTAuthentication",
     ),
 }
+
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND",
+    "django.core.mail.backends.console.EmailBackend",
+)
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "no-reply@nutrilens.local")
+PASSWORD_RESET_URL = os.getenv(
+    "PASSWORD_RESET_URL",
+    "nutrilens://reset-password",
+)
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 

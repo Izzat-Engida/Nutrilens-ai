@@ -4,6 +4,22 @@ from rest_framework import serializers
 from .models import User,Profile
 
 
+class ForgotPassWordSerializer(serializers.Serializer):
+    email=serializers.EmailField()
+
+class ResetPassWordSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    password = serializers.CharField(
+           write_only=True,
+           min_length=8,)
+    password_confirmation = serializers.CharField(write_only=True, min_length=8)
+
+    def validate(self, attrs):
+        if attrs["password"] != attrs["password_confirmation"]:
+            raise serializers.ValidationError({"password_confirmation": "Passwords do not match."})
+        return attrs
+
+
 class LoginSerializer(serializers.Serializer):
     email=serializers.EmailField()
     password=serializers.CharField(write_only=True)

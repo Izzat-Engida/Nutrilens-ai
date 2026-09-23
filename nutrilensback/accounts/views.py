@@ -3,13 +3,22 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 from rest_framework.permissions import IsAuthenticated
-from .models import User,Profile
+from django.conf import settings
+from django.contrib.auth.hashers import make_password
+from django.core.mail import send_mail
+from django.utils import timezone
+from datetime import timedelta
+import hashlib
+import secrets
+from .models import User,Profile,PasswordResetToken
 from .serializers import (
     RegisterSerializer,
     LoginSerializer,
     UpdateUserSerializers,
     RefreshTokenSerializer,
-    ProfileSerializer
+    ProfileSerializer,
+    ForgotPassWordSerializer,
+    ResetPassWordSerializer
     )
 
 
@@ -114,6 +123,76 @@ class AccountView(APIView):
                 "message": "Account deleted successfully",
             },
             status=status.HTTP_204_NO_CONTENT,
+        )
+class ForgotPasswordView(APIView):
+    def post(self,request):
+        serializer=ForgotPassWordSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        email=serializer.validated_data["email"]
+
+        try:
+            user = User.objects.get(email=email, is_active=True)
+        except User.DoesNotExist:
+            user = None
+
+        if user is not None:
+            raw_token = secrets.token_urlsafe(32)
+            PasswordResetToken.objects.filter(
+                user=user, used_at__isnull=True
+            ).update(used_at=timezone.now())
+            PasswordResetToken.objects.create(
+                user=user,
+                token_hash=hashlib.sha256(raw_token.encode()).hexdigest(),
+                expires_at=timezone.now() + timedelta(minutes=30),
+            )
+            reset_url = f"{settings.PASSWORD_RESET_URL}?token={raw_token}"
+            send_mail(
+                subject="Reset your Nutrilens password",
+                message=(
+                    "Use the following link to reset your password. "
+                    f"This link expires in 30 minutes:\n\n{reset_url}"
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+        return Response(
+            {"message": "If that email address exists in our system, a password reset link has been sent to it."},
+            status=status.HTTP_200_OK
+        )
+class ResetPasswordView(APIView):
+    def post(self, request):
+        serializer = ResetPassWordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        token_hash = hashlib.sha256(
+            serializer.validated_data["token"].encode()
+        ).hexdigest()
+        try:
+            reset_token = PasswordResetToken.objects.select_related("user").get(
+                token_hash=token_hash
+            )
+        except PasswordResetToken.DoesNotExist:
+            return Response(
+                {"detail": "This password reset link is invalid or expired."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not reset_token.is_valid or not reset_token.user.is_active:
+            return Response(
+                {"detail": "This password reset link is invalid or expired."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        reset_token.user.password = make_password(serializer.validated_data["password"])
+        reset_token.user.save(update_fields=["password", "updated_at"])
+        reset_token.used_at = timezone.now()
+        reset_token.save(update_fields=["used_at"])
+
+        return Response(
+            {"message": "Password reset successfully. You can now log in."},
+            status=status.HTTP_200_OK,
         )
 class RefreshTokenView(APIView):
 
