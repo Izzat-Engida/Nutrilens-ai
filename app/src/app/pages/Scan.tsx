@@ -1,273 +1,49 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import ScanCameraView from "@/components/ScanCameraView";
-import ScanSummaryView from "@/components/ScanSummaryView";
-
-import { ScanStep } from "../../types/scan";
-import DetectedFoodCard from "@/components/DetectedFoodCard";
-import { ChevronRight, RefreshCcw, Sparkles } from "lucide-react-native";
+import React, { useMemo, useState } from 'react';
+import { ActivityIndicator, Alert, StyleSheet, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ScanCameraView from '@/components/ScanCameraView';
+import ScanReviewView from '@/components/ScanReviewView';
+import ScanSummaryView from '@/components/ScanSummaryView';
+import { useAnalyzeFoodMutation, useConfirmFoodAnalysisMutation } from '@/store/analysis/foodAnalysisApi';
+import { useCreateMealMutation } from '@/store/meals/mealsApi';
+import type { FoodAnalysis } from '@/store/types';
+import type { DetectedFood, MealType, ScanStep } from '@/types/scan';
+import { toNumber } from '@/store/utils/nutritionEstimate';
 
 const ScanScreen = () => {
-  const [step, setStep] = useState<ScanStep>("camera");
+  const [step, setStep] = useState<ScanStep>('camera');
   const [flashEnabled, setFlashEnabled] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [previewPhotoUri, setPreviewPhotoUri] = useState<string | undefined>();
- 
-
-  // const totals = useMemo(
-  //   () =>
-  //     scan.foods.reduce(
-  //       (sum, food) => ({
-  //         calories: sum.calories + food.calories,
-  //         protein: sum.protein + food.protein,
-  //         carbs: sum.carbs + food.carbs,
-  //         fat: sum.fat + food.fat,
-  //       }),
-  //       { calories: 0, protein: 0, carbs: 0, fat: 0 }
-  //     ),
-  //   [scan.foods]
-  // );
-
-  useEffect(() => {
-    if (!isAnalyzing) return;
-
-    const timer = setTimeout(() => {
-      setIsAnalyzing(false);
-      setStep("review");
-    }, 1200);
-
-    return () => clearTimeout(timer);
-  }, [isAnalyzing]);
-
-  const startReviewWithPhoto = (photoUri: string) => {
-    //updateScanPhoto(photoUri);
-    setPreviewPhotoUri(photoUri);
-    setIsAnalyzing(true);
+  const [previewPhotoUri, setPreviewPhotoUri] = useState<string>();
+  const [analysis, setAnalysis] = useState<FoodAnalysis | null>(null);
+  const [foods, setFoods] = useState<DetectedFood[]>([]);
+  const [missingFoodText, setMissingFoodText] = useState('');
+  const [mealType, setMealType] = useState<MealType>('lunch');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [analyzeFood] = useAnalyzeFoodMutation();
+  const [confirmFoodAnalysis] = useConfirmFoodAnalysisMutation();
+  const [createMeal, { isLoading: isSaving }] = useCreateMealMutation();
+  const totals = useMemo(() => foods.reduce((sum, food) => ({ calories: sum.calories + food.calories, protein: sum.protein + food.protein, carbs: sum.carbs + food.carbs, fat: sum.fat + food.fat }), { calories: 0, protein: 0, carbs: 0, fat: 0 }), [foods]);
+  const resetScan = () => { setStep('camera'); setIsAnalyzing(false); setPreviewPhotoUri(undefined); setAnalysis(null); setFoods([]); setMissingFoodText(''); setErrorMessage(null); };
+  const startAnalysis = (uri: string) => {
+    setPreviewPhotoUri(uri); setIsAnalyzing(true); setErrorMessage(null);
+    void analyzeFood(uri).unwrap().then((result) => {
+      const predictions = result.predictions?.length ? result.predictions : [{ label: result.detected_food || 'Detected food', confidence: toNumber(result.confidence) }];
+      setAnalysis(result); setFoods(predictions.map((prediction, index) => ({ id: `${result.id}-${index}`, name: prediction.label, grams: 100, calories: 0, protein: 0, carbs: 0, fat: 0, confidence: prediction.confidence })));
+      setIsAnalyzing(false); setStep('review');
+    }).catch(() => { setIsAnalyzing(false); setErrorMessage('We could not analyze that image. Please try another photo.'); });
   };
-
-  const startReviewWithBarcode = (barcode: string) => {
-    //updateScannedBarcode(barcode);
-    setPreviewPhotoUri(undefined);
-    setIsAnalyzing(true);
+  const saveMeal = async () => {
+    if (!analysis || foods.length === 0) return;
+    try {
+      await confirmFoodAnalysis({ id: analysis.id, detected_food: foods[0].name, estimated_portion_grams: foods[0].grams }).unwrap();
+      await createMeal({ meal_type: mealType, notes: missingFoodText, items: foods.map((food) => ({ food_name: food.name, quantity: food.grams, unit: 'g', calories: food.calories, protein: food.protein, carbohydrates: food.carbs, fat: food.fat })) }).unwrap();
+      resetScan();
+    } catch { setErrorMessage('We could not save this meal. Please try again.'); }
   };
-
-  const resetScan = () => {
-    setIsAnalyzing(false);
-    setPreviewPhotoUri(undefined);
-    //resetScanStore();
-    setStep("camera");
-  };
-
-  const saveMeal = () => {
-    setPreviewPhotoUri(undefined);
-    //saveScannedMeal();
-    setStep("camera");
-  };
-
-  const resetPreview = () => {
-    setIsAnalyzing(false);
-    setPreviewPhotoUri(undefined);
-    //resetScanStore();
-     setStep("camera");
-  };
-
-  const reviewSheet = (
-    <View>
-      <View style={styles.sheetHeader}>
-        <View>
-          <Text style={styles.sheetTitle}>Review meal</Text>
-          <Text style={styles.sheetSubtitle}>Adjust portions before calculating.</Text>
-        </View>
-
-        <View style={styles.aiBadge}>
-          <Sparkles size={14} color="#0071E3" />
-          <Text style={styles.aiBadgeText}>AI</Text>
-        </View>
-      </View>
-
-      {/* <View style={styles.foodList}>
-        {scan.foods.map((food) => (
-          <DetectedFoodCard
-            key={food.id}
-            food={food}
-            onDecrease={() => updatePortion(food.id, "down")}
-            onIncrease={() => updatePortion(food.id, "up")}
-            onRemove={() => removeFood(food.id)}
-          />
-        ))}
-      </View> */}
-
-      <View style={styles.inputBlock}>
-        <Text style={styles.inputLabel}>Anything missing?</Text>
-        {/* <TextInput
-          multiline
-          onChangeText={setMissingFoodText}
-          placeholder="Example: one Coke and two boiled eggs"
-          placeholderTextColor="#9CA3AF"
-          style={styles.textArea}
-          value={scan.missingFoodText}
-        /> */}
-      </View>
-
-      <View style={styles.actionRow}>
-        <TouchableOpacity onPress={resetScan} style={styles.secondaryButton}>
-          <RefreshCcw size={18} color="#111827" />
-          <Text style={styles.secondaryButtonText}>Re-scan</Text>
-        </TouchableOpacity>
-
-        {/* <TouchableOpacity
-          disabled={scan.foods.length === 0}
-          onPress={() => setStep("summary")}
-          style={[
-            styles.primaryButton,
-            scan.foods.length === 0 && styles.primaryButtonDisabled,
-          ]}
-        >
-          <Text style={styles.primaryButtonText}>Calculate</Text>
-          <ChevronRight size={18} color="#FFFFFF" />
-        </TouchableOpacity> */}
-      </View>
-    </View>
-  );
-
-  if (step === "camera" || step === "review") {
-    return (
-      <SafeAreaView edges={[]} style={styles.cameraContainer}>
-        {/* <ScanCameraView
-          flashEnabled={flashEnabled}
-          isAnalyzing={isAnalyzing}
-          previewPhotoUri={previewPhotoUri || scan.capturedPhotoUri}
-          sheetContent={step === "review" ? reviewSheet : undefined}
-          scanCount={scan.scanCount}
-          onToggleFlash={() => setFlashEnabled((enabled) => !enabled)}
-          onCapturePhoto={startReviewWithPhoto}
-          onBarcodeScanned={startReviewWithBarcode}
-          onResetPreview={resetPreview}
-        /> */}
-      </SafeAreaView>
-    );
-  }
-
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* <ScanSummaryView
-        totals={totals}
-        imageUri={scan.capturedPhotoUri}
-        scanCount={scan.scanCount}
-        mealType={scan.mealType}
-        missingFoodText={scan.missingFoodText}
-        onBack={() => setStep("review")}
-        onSelectMealType={setMealType}
-        onSave={saveMeal}
-      /> */}
-    </SafeAreaView>
-  );
+  const review = <ScanReviewView foods={foods} imageUri={previewPhotoUri} missingFoodText={missingFoodText} scanCount={1} onBack={() => setStep('camera')} onReset={resetScan} onChangeMissingFood={setMissingFoodText} onIncreasePortion={(id) => setFoods((items) => items.map((food) => food.id === id ? { ...food, grams: food.grams + 25 } : food))} onDecreasePortion={(id) => setFoods((items) => items.map((food) => food.id === id ? { ...food, grams: Math.max(10, food.grams - 25) } : food))} onRemoveFood={(id) => setFoods((items) => items.filter((food) => food.id !== id))} onCalculate={() => setStep('summary')} />;
+  if (step === 'camera' || step === 'review') return <SafeAreaView edges={[]} style={styles.cameraContainer}><ScanCameraView flashEnabled={flashEnabled} isAnalyzing={isAnalyzing} previewPhotoUri={previewPhotoUri} sheetContent={step === 'review' ? review : undefined} scanCount={1} onToggleFlash={() => setFlashEnabled((value) => !value)} onCapturePhoto={startAnalysis} onBarcodeScanned={(barcode) => Alert.alert('Barcode detected', `${barcode}\nTake a photo to analyze the meal.`)} onResetPreview={resetScan} />{errorMessage && <Text style={styles.error}>{errorMessage}</Text>}</SafeAreaView>;
+  return <SafeAreaView style={styles.container}><ScanSummaryView totals={totals} imageUri={previewPhotoUri} scanCount={1} mealType={mealType} missingFoodText={missingFoodText} onBack={() => setStep('review')} onSelectMealType={setMealType} onSave={() => void saveMeal()} />{isSaving && <ActivityIndicator style={styles.saving} color="#0071E3" />}{errorMessage && <Text style={styles.error}>{errorMessage}</Text>}</SafeAreaView>;
 };
-
 export default ScanScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F5F7",
-  },
-  cameraContainer: {
-    flex: 1,
-    backgroundColor: "#000000",
-  },
-  sheetHeader: {
-    alignItems: "flex-start",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 16,
-  },
-  sheetTitle: {
-    color: "#111827",
-    fontSize: 24,
-    fontWeight: "900",
-  },
-  sheetSubtitle: {
-    color: "#6B7280",
-    fontSize: 14,
-    fontWeight: "600",
-    marginTop: 4,
-  },
-  aiBadge: {
-    alignItems: "center",
-    backgroundColor: "#EAF4FF",
-    borderRadius: 16,
-    flexDirection: "row",
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-  },
-  aiBadgeText: {
-    color: "#0071E3",
-    fontSize: 12,
-    fontWeight: "900",
-  },
-  foodList: {
-    gap: 10,
-  },
-  inputBlock: {
-    marginTop: 18,
-  },
-  inputLabel: {
-    color: "#111827",
-    fontSize: 15,
-    fontWeight: "800",
-    marginBottom: 9,
-  },
-  textArea: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#E5E7EB",
-    borderRadius: 8,
-    borderWidth: 1,
-    color: "#111827",
-    fontSize: 15,
-    minHeight: 88,
-    padding: 13,
-    textAlignVertical: "top",
-  },
-  actionRow: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 18,
-  },
-  secondaryButton: {
-    alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderColor: "#E5E7EB",
-    borderRadius: 8,
-    borderWidth: 1,
-    flex: 1,
-    flexDirection: "row",
-    gap: 8,
-    height: 54,
-    justifyContent: "center",
-  },
-  secondaryButtonText: {
-    color: "#111827",
-    fontSize: 15,
-    fontWeight: "800",
-  },
-  primaryButton: {
-    alignItems: "center",
-    backgroundColor: "#0071E3",
-    borderRadius: 8,
-    flex: 1,
-    flexDirection: "row",
-    gap: 8,
-    height: 54,
-    justifyContent: "center",
-  },
-  primaryButtonDisabled: {
-    backgroundColor: "#93C5FD",
-  },
-  primaryButtonText: {
-    color: "#FFFFFF",
-    fontSize: 15,
-    fontWeight: "900",
-  },
-});
+const styles = StyleSheet.create({ container: { flex: 1, backgroundColor: '#F5F5F7' }, cameraContainer: { flex: 1, backgroundColor: '#000' }, saving: { position: 'absolute', bottom: 45, alignSelf: 'center' }, error: { color: '#FCA5A5', textAlign: 'center', padding: 10, backgroundColor: '#111827' } });

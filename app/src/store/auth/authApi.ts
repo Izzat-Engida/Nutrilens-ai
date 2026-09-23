@@ -1,11 +1,5 @@
 import { apiSlice } from '../api/apiSlice';
-
-interface User {
-  id: number;
-  first_name: string;
-  last_name: string;
-  email: string;
-}
+import type { User } from '../auth/authSlice';
 
 interface LoginResponse {
   message: string;
@@ -32,6 +26,24 @@ interface RegisterRequest {
   password: string;
 }
 
+interface AccountUpdateRequest {
+  full_name?: string;
+  email?: string;
+}
+
+interface AccountUpdateResponse {
+  message: string;
+  user: {
+    id: number;
+    full_name: string;
+    email: string;
+  };
+}
+
+interface MessageResponse {
+  message: string;
+}
+
 export const authApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
@@ -41,10 +53,40 @@ export const authApi = apiSlice.injectEndpoints({
         body,
       }),
     }),
-
     signup: builder.mutation<RegisterResponse, RegisterRequest>({
       query: (body) => ({
         url: '/api/accounts/register/',
+        method: 'POST',
+        body,
+      }),
+    }),
+    updateAccount: builder.mutation<AccountUpdateResponse, AccountUpdateRequest>({
+      query: (body) => ({
+        url: '/api/accounts/account/',
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['Account'],
+    }),
+    deleteAccount: builder.mutation<void, void>({
+      query: () => ({
+        url: '/api/accounts/account/',
+        method: 'DELETE',
+      }),
+    }),
+    requestPasswordReset: builder.mutation<MessageResponse, { email: string }>({
+      query: (body) => ({
+        url: '/api/accounts/password-reset/',
+        method: 'POST',
+        body,
+      }),
+    }),
+    confirmPasswordReset: builder.mutation<
+      MessageResponse,
+      { token: string; password: string; password_confirmation: string }
+    >({
+      query: (body) => ({
+        url: '/api/accounts/password-reset/confirm/',
         method: 'POST',
         body,
       }),
@@ -55,4 +97,8 @@ export const authApi = apiSlice.injectEndpoints({
 export const {
   useLoginMutation,
   useSignupMutation,
+  useUpdateAccountMutation,
+  useDeleteAccountMutation,
+  useRequestPasswordResetMutation,
+  useConfirmPasswordResetMutation,
 } = authApi;

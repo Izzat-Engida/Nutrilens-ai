@@ -1,10 +1,15 @@
-import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './auth/authSlice';
+import { configureStore, createListenerMiddleware } from '@reduxjs/toolkit';
+import authReducer, { logout, setAccessToken, setCredentials, setUser } from './auth/authSlice';
 import { apiSlice } from './api/apiSlice';
 import onboardingReducer from './onboarding/onboardingSlice';
-import { createListenerMiddleware } from '@reduxjs/toolkit';
-import { logout, setAccessToken, setCredentials } from './auth/authSlice';
 import { clearAuthSession, saveAuthSession } from './auth/authStorage';
+import './auth/authApi';
+import './onboarding/profileApi';
+import './nutrition/nutritionApi';
+import './meals/mealsApi';
+import './tracking/trackingApi';
+import './recommendations/recommendationsApi';
+import './analysis/foodAnalysisApi';
 
 const authPersistenceMiddleware = createListenerMiddleware();
 
@@ -38,6 +43,24 @@ authPersistenceMiddleware.startListening({
 });
 
 authPersistenceMiddleware.startListening({
+  actionCreator: setUser,
+  effect: async (_action, listenerApi) => {
+    try {
+      const auth = (listenerApi.getState() as RootState).auth;
+      if (auth.accessToken && auth.refreshToken && auth.user) {
+        await saveAuthSession({
+          accessToken: auth.accessToken,
+          refreshToken: auth.refreshToken,
+          user: auth.user,
+        });
+      }
+    } catch (error) {
+      console.warn('Unable to persist updated user', error);
+    }
+  },
+});
+
+authPersistenceMiddleware.startListening({
   actionCreator: logout,
   effect: async () => {
     try {
@@ -51,9 +74,8 @@ authPersistenceMiddleware.startListening({
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    onboarding:onboardingReducer,
+    onboarding: onboardingReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
-
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()

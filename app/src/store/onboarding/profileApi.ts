@@ -23,6 +23,7 @@ export const profileApi = apiSlice.injectEndpoints({
         url: "/api/accounts/profile/",
         method: "GET",
       }),
+      providesTags: ["Profile"],
     }),
     createProfile: builder.mutation<ProfileResponse, ProfileData>({
       query: (body) => ({
@@ -30,6 +31,7 @@ export const profileApi = apiSlice.injectEndpoints({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["Profile", "Nutrition", "Tracking"],
     }),
     updateProfile: builder.mutation<ProfileResponse, Partial<ProfileData>>({
       query: (body) => ({
@@ -37,11 +39,13 @@ export const profileApi = apiSlice.injectEndpoints({
         method: "PUT",
         body,
       }),
+      invalidatesTags: ["Profile", "Nutrition", "Tracking"],
     }),
   }),
 });
 
 export const {
+  useGetProfileQuery,
   useLazyGetProfileQuery,
   useCreateProfileMutation,
   useUpdateProfileMutation,

@@ -113,7 +113,7 @@ contentContainerStyle={{ flexGrow: 1 }}
               )}
             </TouchableOpacity>
            </View>
-            <TouchableOpacity style={{ alignSelf: "flex-end", marginTop: 10 }}>
+            <TouchableOpacity style={{ alignSelf: "flex-end", marginTop: 10 }} onPress={() => router.push('/(auth)/forgot-password')}>
             <Text style={{ color: "#0071E3", fontWeight: "600" }}>Forgot password?</Text>
           </TouchableOpacity>
           </View>

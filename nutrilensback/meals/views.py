@@ -5,6 +5,8 @@ from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from nutrition.services.daily_sync import sync_daily_nutrition
+
 from .models import Meal
 from .serializers import MealSerializer
 
@@ -57,3 +59,19 @@ class MealViewSet(viewsets.ModelViewSet):
             return Response({"detail": self._date_error}, status=status.HTTP_400_BAD_REQUEST)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    def perform_create(self, serializer):
+        meal = serializer.save()
+        sync_daily_nutrition(self.request.user, meal.consumed_at)
+
+    def perform_update(self, serializer):
+        previous_consumed_at = serializer.instance.consumed_at
+        meal = serializer.save()
+        sync_daily_nutrition(self.request.user, previous_consumed_at)
+        sync_daily_nutrition(self.request.user, meal.consumed_at)
+
+    def perform_destroy(self, instance):
+        user = instance.user
+        consumed_at = instance.consumed_at
+        instance.delete()
+        sync_daily_nutrition(user, consumed_at)

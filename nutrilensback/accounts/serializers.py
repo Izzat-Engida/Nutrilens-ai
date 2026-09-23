@@ -90,18 +90,17 @@ class UpdateUserSerializers(serializers.ModelSerializer):
     def update(self,instance,validated_data):
         full_name=validated_data.pop("full_name",None)
         if full_name is not None:
-            
             name_parts = full_name.strip().split()
-
-            instance.first_name=name_parts[0]
+            if name_parts:
+                instance.first_name=name_parts[0]
             instance.last_name=(
                 " ".join(name_parts[1:])
                 if len(name_parts)>1
                 else ""
             )
-            if "email" in validated_data:
-                instance.email=validated_data["email"]
-            instance.save()
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+        instance.save()
         return instance
 from rest_framework_simplejwt.tokens import RefreshToken
 

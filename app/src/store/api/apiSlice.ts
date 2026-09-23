@@ -1,9 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../index';
 import { logout, setAccessToken } from '../auth/authSlice';
+import { API_BASE_URL } from '../config';
 
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: process.env.EXPO_PUBLIC_API_URL,
+  baseUrl: API_BASE_URL,
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.accessToken;
 
@@ -53,5 +54,14 @@ const baseQueryWithReauth: typeof rawBaseQuery = async (args, api, extraOptions)
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
+  tagTypes: [
+    'Account',
+    'Profile',
+    'Nutrition',
+    'Meals',
+    'Tracking',
+    'Recommendations',
+    'FoodAnalysis',
+  ],
   endpoints: () => ({}),
 });
